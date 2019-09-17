@@ -11,22 +11,27 @@
 		die();
 	}
     
+//split arguments into array.
+    $args = explode(" ", $_REQUEST['text']); 
 
-    // Basic use of post data slack sends
-    $args = explode(" ", $_REQUEST['text']); //split arguments into array.
-
-   if(count($args) > 1) dieWithMessage("Too many arguments."); //Check if 
+ //Throw error if there are too many arguments.
+   if(count($args) > 1) dieWithMessage("Too many arguments.");
    else {
+
+    //Check if there are no arguments.
     if($args[0] == ""){
         //TODO: Set user to active on "other".
     } else {
         //TODO: Set any active project to inactive.
         //TODO: Set user to active on project.
+
+        // $sql = "SELECT * FROM projects WHERE name=$args[0]";
     }
-      // $sql = "SELECT * FROM projects WHERE name=$args[0]";
+      
    }
 
 
+   //Sends an exit messasge
    function dieWithMessage($message){
        bot_respond($message);
        die();
