@@ -10,10 +10,18 @@
 		bot_respond("*Unauthorized token!*");
 		die();
 	}
-	
+    
+
     // Basic use of post data slack sends
-    $inputs = explode(" ", $_REQUEST['text']);
-    bot_respond($inputs[0]);
+    $args = explode(" ", $_REQUEST['text']);
+
+   if(count($args) > 1) bot_respond("Too many arguments.");
+   else {
+      // $sql = "SELECT * FROM projects WHERE name=$args[0]";
+    bot_respond($args[0]);
+   }
+
+
 	// This can used for debugging
 	dumper($_REQUEST);
 	
