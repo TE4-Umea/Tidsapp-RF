@@ -13,18 +13,24 @@
     
 
     // Basic use of post data slack sends
-    $args = explode(" ", $_REQUEST['text']);
+    $args = explode(" ", $_REQUEST['text']); //split arguments into array.
 
-   if(count($args) > 1) bot_respond("Too many arguments.");
+   if(count($args) > 1) dieWithMessage("Too many arguments."); //Check if 
    else {
+    if($args[0] == ""){
+        //TODO: Set user to active on "other".
+    } else {
+        //TODO: Set any active project to inactive.
+        //TODO: Set user to active on project.
+    }
       // $sql = "SELECT * FROM projects WHERE name=$args[0]";
-    bot_respond($args[0]);
    }
 
 
-	// This can used for debugging
-	dumper($_REQUEST);
-	
+   function dieWithMessage($message){
+       bot_respond($message);
+       die();
+   }
 	
 	/*
 		Helper Functions
@@ -34,9 +40,4 @@
 	function bot_respond($output){
 		echo json_encode($output);
 	}
-	
-	function dumper($request){
-        echo "<pre>" . print_r($request, 1) . "</pre>";
-    }
-	
 ?>
