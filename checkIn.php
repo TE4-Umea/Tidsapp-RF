@@ -29,7 +29,7 @@
        
     
     	//Check if there are no arguments.
-		include_once 'include/dbinfo.php';
+		include_once 'include/dbinfoExample.php';
 
 
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
