@@ -35,7 +35,7 @@
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		
 
-		$sql = "SELECT * FROM projects WHERE name = :name";
+		$sql = "SELECT id FROM projects WHERE name = :name";
 
 		bot_respond($args[0]);
 		bot_respond($sql);
@@ -46,7 +46,18 @@
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
     foreach($result as $v) {
-        echo $v;
+		echo $v;
+		$sql = "SELECT * FROM projectMeta WHERE id = :id";
+
+		$stmt = $dbh->prepare($sql);
+		$stmt->bindParam(':id', $v);
+		$stmt->execute(); 
+
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		foreach($result as $s) {
+			bot_respond($s);
+		}
+
     }
 		
 		}
