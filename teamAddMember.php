@@ -21,6 +21,22 @@
         die();
     }
 
+    $filteredTeamName = filter_var($textCheck[0], FILTER_SANITIZE_STRING);
+    $filteredUserName = filter_var($textCheck[1], FILTER_SANITIZE_STRING);
+    $metaKey = 'Member';
+    include_once 'include/dbinfo.php';
+
+    $stmt = $dbh->prepare("SELECT id FROM teams WHERE name = :name");
+    $stmt->bindParam(':name', $filteredTeamName);
+    $stmt->execute();
+
+    $id = $stmt->fetch(PDO::FETCH)[0];
+
+    $stmt = $dbh->prepare("INSERT INTO teamMeta(id, teamId, metaKey value) VALUES (teamId = :teamId, metaKey = :metaKey, value = :value)");
+    $stmt->bindParam(':teamId', $id);
+    $stmt->bindParam(':metaKey', $metaKey);
+    $stmt->bindParam(':value', $filteredUserName);
+    $stmt->execute();
 
     function bot_respond($output){
         echo json_encode($output);
