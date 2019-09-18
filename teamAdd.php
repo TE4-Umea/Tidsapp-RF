@@ -17,6 +17,21 @@
 
     include_once 'include/dbinfo.php';
 
+    $stmt = $dbh->prepare("SELECT * FROM teams");
+    $stmt->execute();
+
+    $teams = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $teamNames = array();
+
+    foreach($teams as $team){
+        array_push($teamNames, $team['name']);
+    }
+
+    if(!in_array($filteredTeamName, $teamNames)){
+        bot_respond('Team already exist');
+        die();
+    }
 
     $stmt = $dbh->prepare("INSERT INTO `teams`(`id`, `name`) VALUES name = :name");
     $stmt->bindParam(':name', $filteredTeamName);
