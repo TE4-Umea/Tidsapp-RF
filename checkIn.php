@@ -31,7 +31,9 @@
     	//Check if there are no arguments.
 		include_once 'include/dbinfoExample.php';
 
+
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		
 
 		$sql = "SELECT * FROM projects WHERE name=" . $args[0];
 	
@@ -39,22 +41,10 @@
 
 		$stmt = $dbh->query($sql);
 		
-		$result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
 		foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
 			echo $v;
 		}
-
-
-		if ($stm->num_rows > 0) {
-			// output data of each row
-			while($row = $stm->fetch_assoc()) {
-				echo "id: " . $row["id"]. " - Name: " . $row["name"];
-			}
-		} else {
-			echo "0 results";
-		}
-		bot_respond($stm);
-      
+		
 		}
 	}
 	
