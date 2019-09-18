@@ -43,7 +43,7 @@ else {
 		$stmt->bindParam(':name', $args[0]);
 		$stmt->execute();
 
-		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		$result = $stmt->fetch(PDO::FETCH_ASSOC[0]);
 
 		echo ($result);
 
