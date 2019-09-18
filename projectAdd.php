@@ -18,9 +18,10 @@
     if(count($args) > 1) bot_respond("Too many arguments.");
         else {
         bot_respond($args[0]);
-        }
-    $sql = "INSERT INTO projects (name) VALUES ('$args[0]')";
-    $sql = "INSERT INTO projectMeta (projectId) VALUES (1)"; //TODO: add id of projects instead of 1
+		}
+	$projectAdd = "INSERT INTO projects (name) VALUES ('$args[0]')";
+	$idOfProject = "SELECT id FROM projects WHERE name=$args[0]";
+    $projectMetaAdd = "INSERT INTO projectMeta (projectId) VALUES ($idOfProject)";
     
 	// This can used for debugging
 	dumper($_REQUEST);
