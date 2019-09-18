@@ -18,7 +18,7 @@
 
 	// Basic use of post data slack sends
 
-	$stmt = $dbh->prepare(SELECT * FROM projects);
+	$stmt = $dbh->prepare("SELECT * FROM projects");
 	$stmt->execute();
 
 	$projects = $stmt->fetch(PDO::FETCH_ASSOC);

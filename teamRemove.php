@@ -18,10 +18,9 @@
 
 	// Basic use of post data slack sends
 
-	$stmt = $dbh->prepare(SELECT * FROM teams);
+	$stmt = $dbh->prepare("SELECT * FROM teams");
 	$stmt->execute();
 
-	$teams = $stmt->fetch(PDO::FETCH_ASSOC);
 
 	//Removes team and the teamMeta created with the same teamId as the team.
 	$stmt = $dbh->prepare("SELECT `id` FROM `teams` WHERE name = :name");

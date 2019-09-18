@@ -18,10 +18,9 @@
 
 	// Basic use of post data slack sends
 
-	$stmt = $dbh->prepare(SELECT * FROM projects);
+	$stmt = $dbh->prepare("SELECT * FROM projects");
 	$stmt->execute();
 
-	$projects = $stmt->fetch(PDO::FETCH_ASSOC);
 
 	//Removes project and the projectMeta created with the same projectId as the project.
 	$stmt = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
