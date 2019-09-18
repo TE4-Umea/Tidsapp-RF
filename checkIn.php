@@ -47,7 +47,7 @@ else {
 
 		echo ($result);
 
-		$sql = "SELECT * FROM projectMeta(id, projectId, metaKey, value) WHERE projectId = :projectId";
+		$sql = "SELECT * FROM projectMeta WHERE projectId = :projectId";
 
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':projectId', $result);
@@ -67,3 +67,5 @@ function bot_respond($output)
 {
 	echo json_encode($output);
 }
+
+		echo $result;
