@@ -15,7 +15,7 @@
     $args = explode(" ", $_REQUEST['text']); 
 
  //Throw error if there are too many arguments.
-   if(count($args) > 1) dieWithMessage("Too many arguments.");
+   if(count($args) > 1) die("Too many arguments.");
    else {
        
 
