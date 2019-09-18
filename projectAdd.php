@@ -12,7 +12,6 @@
 	}
 	
 	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
-	$filteredId = filter_input(INPUT_GET, "ID", FALITER_VALIDATE_INT);
 	
 	//includes database info
 	include_once 'include/dbinfo.php'
@@ -35,12 +34,16 @@
 		die();
 	}
 
+	//Creates a new project in projects and a new projectMeta with the same projectId as the id of the project in projects.
 	$stmt = $dbh->prepare("INSERT INTO `projects`(`id`, `name`) VALUES name = :name");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
+	$stmt = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = $filteredProjectName");
+	$stmt->execute();
+
 	$stmt = $dbh->prepare("INSERT * INTO `projectMeta` VALUES projectId = :id");
-	$stmt->bindParam(':id', $filteredId);
+	$stmt->bindParam(':id');
 	$stmt->execute();
     
 		
