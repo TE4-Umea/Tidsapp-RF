@@ -38,7 +38,6 @@
 		$sql = "SELECT id FROM projects WHERE name = :name";
 
 		bot_respond($args[0]);
-		bot_respond($sql);
 
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':name', $args[0]);
@@ -46,7 +45,6 @@
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
     foreach($result as $v) {
-		echo $v;
 		$sql = "SELECT * FROM projectMeta WHERE id = :id";
 
 		$stmt = $dbh->prepare($sql);
