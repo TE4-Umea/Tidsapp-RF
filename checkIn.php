@@ -33,7 +33,7 @@
 
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$sql = "SELECT * FROM projects WHERE name=" . $args[0];
+		$sql = "SELECT * FROM projects WHERE name='" . $args[0] . "'";
 	
 		bot_respond($sql);
 
