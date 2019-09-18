@@ -17,13 +17,6 @@
  //Throw error if there are too many arguments.
    if(count($args) > 1) die("Too many arguments.");
    else {
-       
-
-        
-    
-       
-    
-    
 
     if($args[0] == ""){
         //TODO: Set user to active on "other".
@@ -37,7 +30,7 @@
     
     	//Check if there are no arguments.
 		include_once 'include/dbinfoExample.php';
-		$sql = "SELECT * FROM projects WHERE name='" . $args[0] . "'";
+		$sql = "SELECT * FROM projects WHERE name=" . $args[0];
 	
 		bot_respond($sql);
 
@@ -47,13 +40,6 @@
       
 		}
 	}
-
-
-   //Sends an exit messasge
-   function dieWithMessage($message){
-       bot_respond($message);
-       die();
-   }
 	
 	/*
 		Helper Functions
