@@ -1,5 +1,5 @@
 <?php
-	
+     
 	// Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
 	$tokens = array(
 		"tW0wHpLokfme5zJppcZSJUDg"
@@ -17,15 +17,36 @@
  //Throw error if there are too many arguments.
    if(count($args) > 1) dieWithMessage("Too many arguments.");
    else {
+    try{
+        include_once 'include/dbinfoExample.php';
 
-    //Check if there are no arguments.
+        
+    } catch(Exception $e) {
+        echo $e;
+    }
+       
+    
+    
+
     if($args[0] == ""){
         //TODO: Set user to active on "other".
     } else {
+
+        
         //TODO: Set any active project to inactive.
         //TODO: Set user to active on project.
 
-        // $sql = "SELECT * FROM projects WHERE name=$args[0]";
+       
+    
+    //Check if there are no arguments.
+
+    
+
+    $sql = "SELECT * FROM projects WHERE name=$args[0]";
+
+    $stm = $dbh->query($sql);
+
+    bot_respond($stm);
     }
       
    }
