@@ -21,7 +21,7 @@
 	$stmt = $dbh->prepare(SELECT * FROM projects);
 	$stmt->execute();
 
-	$projects = stmt->fetch(PDO::FETCH_ASSOC);
+	$projects = $stmt->fetch(PDO::FETCH_ASSOC);
 
 	$projectName = array();
 
