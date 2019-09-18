@@ -30,6 +30,9 @@
     
     	//Check if there are no arguments.
 		include_once 'include/dbinfoExample.php';
+
+		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+
 		$sql = "SELECT * FROM projects WHERE name=" . $args[0];
 	
 		bot_respond($sql);
