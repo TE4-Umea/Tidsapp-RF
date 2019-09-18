@@ -45,7 +45,8 @@
 		$stmt->execute(); 
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		echo $result;
+    foreach($result as $v) {
+		echo $v;
 		$sql = "SELECT * FROM projectMeta WHERE id = :id";
 
 		$stmt = $dbh->prepare($sql);
@@ -53,10 +54,13 @@
 		$stmt->execute(); 
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		bot_respond($result);
+		foreach($result as $s) {
+			bot_respond($s);
+		}
 
+    }
 		
-	
+		}
 	}
 	
 	/*
