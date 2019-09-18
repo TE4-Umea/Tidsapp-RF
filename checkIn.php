@@ -22,7 +22,7 @@
 
         
     } catch(Exception $e) {
-        echo $e;
+        bot_respond($e);
     }
        
     
@@ -42,7 +42,9 @@
 
     
 
-    $sql = "SELECT * FROM projects WHERE name=$args[0]";
+	$sql = "SELECT * FROM projects WHERE name=$args[0]";
+	
+	bot_respond($sql);
 
     $stm = $dbh->query($sql);
 
