@@ -36,14 +36,15 @@
 		
 
 		$sql = "SELECT * FROM projects WHERE name = :name";
-	
+
+		bot_respond($args[0]);
 		bot_respond($sql);
 
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':name', $args[0]);
 		$stmt->execute(); 
 
-		$result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
     foreach($result as $v) {
         echo $v;
     }
