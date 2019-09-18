@@ -10,34 +10,36 @@
 		bot_respond("*Unauthorized token!*");
 		die();
 	}
+
+	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
+	
 	//includes database info
 	include_once 'include/dbinfo.php'
-	
+
 	// Basic use of post data slack sends
-    $args = explode(" ", $_REQUEST['text']);
-    if(count($args) > 1) bot_respond("Too many arguments.");
-        else {
-        bot_respond($args[0]);
-        }
-    $idOfProject = "SELECT id FROM projects WHERE name='$args[0]'";
-    $projectRemove = "DELETE FROM projects WHERE name='$args[0]'";
-    $projectMetaRemove = "DELETE FROM projectMeta WHERE projectId=$idOfProject";
+
+	$stmt = $dbh->prepare(SELECT * FROM projects);
+	$stmt->execute();
+
+	$projects = stmt->fetch(PDO::FETCH_ASSOC);
+
+	//Creates a new project in projects and a new projectMeta with the same projectId as the id of the project in projects.
+	$stmtid = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
+	$stmtid->bindParam(':name', $filteredProjectName);
+	$stmtid->execute();
+	
+	$stmt = $dbh->prepare("DELETE * FROM `projects` WHERE name = :name");
+	$stmt->bindParam(':name', $filteredProjectName);
+	$stmt->execute();
+
+	$stmt = $dbh->prepare("DELETE * FROM `projectMeta` WHERE projectId = :id");
+	$stmt->bindParam(':id', $stmtid);
+	$stmt->execute();
     
-	// This can used for debugging
-	dumper($_REQUEST);
-	
-	
-	/*
-		Helper Functions
-	*/
 	
 	// Send information back to slack
 	function bot_respond($output){
 		echo json_encode($output);
 	}
-	
-	function dumper($request){
-        echo "<pre>" . print_r($request, 1) . "</pre>";
-    }
 	
 ?>
