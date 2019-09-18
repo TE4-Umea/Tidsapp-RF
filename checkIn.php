@@ -44,6 +44,8 @@
 		$stmt->execute(); 
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC)[0];
+
+		echo $result;
 		$sql = "SELECT * FROM projectMeta WHERE projectId = :projectId";
 
 		$stmt = $dbh->prepare($sql);
