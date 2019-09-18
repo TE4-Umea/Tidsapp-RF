@@ -1,9 +1,9 @@
 <?php
 
-$dbuser = 'rfBot';
-$dbpass = 'rfBotPass';
-$dbhost = 'localhost';
-$dbname = 'testDB';
+$dbuser = '';
+$dbpass = '';
+$dbhost = '';
+$dbname = '';
 
 $dbh = new PDO('mysql:host=' . $dbhost . ';dbname=' . $dbname . ';charset=utf8mb4', $dbuser, $dbpass);
 ?>

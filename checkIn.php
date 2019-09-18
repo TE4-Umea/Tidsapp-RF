@@ -29,21 +29,24 @@
        
     
     	//Check if there are no arguments.
-		include_once 'include/dbinfoExample.php';
+		include_once 'include/dbinfo.php';
 
 
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		
 
-		$sql = "SELECT * FROM projects WHERE name=" . $args[0];
+		$sql = "SELECT * FROM projects WHERE name = :name";
 	
 		bot_respond($sql);
 
-		$stmt = $dbh->query($sql);
-		
-		foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
-			echo $v;
-		}
+		$stmt = $dbh->prepare($sql);
+		$stmt->bindParam(':name', $args[0]);
+		$stmt->execute(); 
+
+		$result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
+        echo $v;
+    }
 		
 		}
 	}
