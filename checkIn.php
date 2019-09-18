@@ -38,7 +38,16 @@
 		bot_respond($sql);
 
 		$stm = $dbh->query($sql);
-	
+
+
+		if ($result->num_rows > 0) {
+			// output data of each row
+			while($row = $result->fetch_assoc()) {
+				echo "id: " . $row["id"]. " - Name: " . $row["name"];
+			}
+		} else {
+			echo "0 results";
+		}
 		bot_respond($stm);
       
 		}
