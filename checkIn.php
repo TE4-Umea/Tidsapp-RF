@@ -52,7 +52,7 @@
 		$stmt->execute(); 
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		echo($result);
+		echo(sizeof($result));
 		foreach($result as $meta) {
 			echo($meta);
 		}
