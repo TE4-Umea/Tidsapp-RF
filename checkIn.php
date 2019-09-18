@@ -37,11 +37,8 @@
 	
 		bot_respond($sql);
 
-		$stmt = $dbh->prepare($sql);
-
-		$stmt->execute();
-
-
+		$stmt = $dbh->query($sql);
+		
 		$result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
 		foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
 			echo $v;
