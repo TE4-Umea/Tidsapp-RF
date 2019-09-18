@@ -52,9 +52,7 @@
 		$stmt->execute(); 
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		foreach($result as $meta) {
-			bot_respond($meta);
-		}
+		bot_respond($result);
 
     }
 		
