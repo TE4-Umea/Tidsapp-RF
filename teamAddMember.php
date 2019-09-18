@@ -32,6 +32,11 @@
 
     $id = $stmt->fetch(PDO::FETCH)[0];
 
+    if($id == false){
+        bot_respond('That team does not exist.');
+        die();
+    }
+
     $stmt = $dbh->prepare("INSERT INTO teamMeta(id, teamId, metaKey value) VALUES (teamId = :teamId, metaKey = :metaKey, value = :value)");
     $stmt->bindParam(':teamId', $id);
     $stmt->bindParam(':metaKey', $metaKey);
