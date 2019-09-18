@@ -39,12 +39,14 @@
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
-	$stmtid = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
-	$stmtid->bindParam(':name', $filteredProjectName)
-	$stmtid->execute();
+	$stmt = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
+	$stmt->bindParam(':name', $filteredProjectName)
+	$stmt->execute();
+
+	$id = $stmt->fetch(PDO::FETCH_ASSOC)[0];
 
 	$stmt = $dbh->prepare("INSERT * INTO `projectMeta` VALUES projectId = :id");
-	$stmt->bindParam(':id', $stmtid);
+	$stmt->bindParam(':id', $id);
 	$stmt->execute();
     
 		

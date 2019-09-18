@@ -23,17 +23,19 @@
 
 	$projects = stmt->fetch(PDO::FETCH_ASSOC);
 
-	//Creates a new project in projects and a new projectMeta with the same projectId as the id of the project in projects.
-	$stmtid = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
-	$stmtid->bindParam(':name', $filteredProjectName);
-	$stmtid->execute();
+	//Removes project and the projectMeta created with the same projectId as the project.
+	$stmt = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
+	$stmt->bindParam(':name', $filteredProjectName);
+	$stmt->execute();
+
+	$id = $stmt->fetch(PDO::FETCH_ASSOC);
 	
 	$stmt = $dbh->prepare("DELETE * FROM `projects` WHERE name = :name");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
 	$stmt = $dbh->prepare("DELETE * FROM `projectMeta` WHERE projectId = :id");
-	$stmt->bindParam(':id', $stmtid);
+	$stmt->bindParam(':id', $id);
 	$stmt->execute();
     
 	
