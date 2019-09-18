@@ -42,7 +42,7 @@
 
     
 
-	$sql = "SELECT * FROM projects WHERE name=$args[0]";
+	$sql = "SELECT * FROM projects WHERE name=" . $args[0];
 	
 	bot_respond($sql);
 
