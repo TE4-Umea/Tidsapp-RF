@@ -10,7 +10,8 @@
 		bot_respond("*Unauthorized token!*");
 		die();
 	}
-	include /include/dbinfo.php
+	//includes database info
+	include_once 'include/dbinfo.php'
 	
 	// Basic use of post data slack sends
     $args = explode(" ", $_REQUEST['text']);
@@ -19,7 +20,7 @@
         bot_respond($args[0]);
         }
     $sql = "INSERT INTO projects (name) VALUES ('$args[0]')";
-    $sql = "INSERT INTO projectMeta (projectId) VALUES ('projects')";
+    $sql = "INSERT INTO projectMeta (projectId) VALUES (1)"; //TODO: add id of projects instead of 1
     
 	// This can used for debugging
 	dumper($_REQUEST);
