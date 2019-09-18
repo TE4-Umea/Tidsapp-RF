@@ -39,11 +39,12 @@
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
-	$stmt = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = $filteredProjectName");
-	$stmt->execute();
+	$stmtid = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
+	$stmtid->bindParam(':name', $filteredProjectName)
+	$stmtid->execute();
 
 	$stmt = $dbh->prepare("INSERT * INTO `projectMeta` VALUES projectId = :id");
-	$stmt->bindParam(':id');
+	$stmt->bindParam(':id', $stmtid);
 	$stmt->execute();
     
 		
