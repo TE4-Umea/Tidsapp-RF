@@ -35,7 +35,7 @@
 		$stmt->execute(); 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC)[0];
 		echo $result;
-		$sql = "SELECT * FROM projectMeta(id, projectId, metaKey, value) WHERE projectId = :projectId";
+		$sql = "SELECT * FROM projectMeta WHERE projectId = :projectId";
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':projectId', $result);
 		$stmt->execute(); 
