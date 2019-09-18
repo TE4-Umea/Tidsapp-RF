@@ -40,9 +40,9 @@
 		$stm = $dbh->query($sql);
 
 
-		if ($result->num_rows > 0) {
+		if ($stm->num_rows > 0) {
 			// output data of each row
-			while($row = $result->fetch_assoc()) {
+			while($row = $stm->fetch_assoc()) {
 				echo "id: " . $row["id"]. " - Name: " . $row["name"];
 			}
 		} else {
