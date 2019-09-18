@@ -45,7 +45,7 @@
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
     foreach($result as $id) {
-		$sql = "SELECT * FROM projectMeta WHERE projectid = :id";
+		$sql = "SELECT * FROM projectMeta WHERE projectId = :id";
 
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':id', $id);
