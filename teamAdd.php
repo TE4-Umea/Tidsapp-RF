@@ -28,7 +28,7 @@
         array_push($teamNames, $team['name']);
     }
 
-    if(!in_array($filteredTeamName, $teamNames)){
+    if(in_array($filteredTeamName, $teamNames)){
         bot_respond('Team already exist');
         die();
     }
