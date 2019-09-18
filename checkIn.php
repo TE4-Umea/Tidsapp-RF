@@ -52,9 +52,8 @@
 		$stmt->execute(); 
 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		echo(sizeof($result));
 		foreach($result as $meta) {
-			echo($meta);
+			bot_respond($meta);
 		}
 
     }
