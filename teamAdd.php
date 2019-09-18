@@ -13,6 +13,12 @@
         die();
     }
 
+    $nameCheck = explode(" ", $_POST['text']);
+
+    if($nameCheck.sizeof() > 1){
+        bot_respond('Please make the team name only one word.');
+    }
+
     $filteredTeamName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
 
     include_once 'include/dbinfo.php';
