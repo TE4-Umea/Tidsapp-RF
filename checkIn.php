@@ -17,13 +17,10 @@
  //Throw error if there are too many arguments.
    if(count($args) > 1) dieWithMessage("Too many arguments.");
    else {
-    try{
-        include_once 'include/dbinfoExample.php';
+       
 
         
-    } catch(Exception $e) {
-        bot_respond($e);
-    }
+    
        
     
     
@@ -39,10 +36,8 @@
        
     
     //Check if there are no arguments.
-
-    
-
-	$sql = "SELECT * FROM projects WHERE name=" . $args[0];
+	include_once 'include/dbinfoExample.php';
+	$sql = "SELECT id FROM projects WHERE name=" . $args[0];
 	
 	bot_respond($sql);
 
@@ -50,13 +45,10 @@
 	
 	if ($stm->num_rows > 0) {
 		// output data of each row
-		while($row = $stm->fetch_assoc()) {
-			echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
-		}
+		echo "yeet";
 	} else {
 		echo "0 results";
 	}
-	$dbh->close();
     }
       
    }
