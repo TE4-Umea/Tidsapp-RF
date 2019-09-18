@@ -37,7 +37,7 @@
     
     	//Check if there are no arguments.
 		include_once 'include/dbinfoExample.php';
-		$sql = "SELECT id FROM projects WHERE name=" . $args[0] . ";";
+		$sql = "SELECT id FROM projects WHERE name='" . $args[0] . "';";
 	
 		bot_respond($sql);
 
