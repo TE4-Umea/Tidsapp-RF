@@ -43,9 +43,10 @@
 		$stmt->bindParam(':name', $args[0]);
 		$stmt->execute(); 
 
-		$result = $stmt->fetch(PDO::FETCH_ASSOC)[0];
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		echo $result;
+		echo($result);
+
 		$sql = "SELECT * FROM projectMeta(id, projectId, metaKey, value) WHERE projectId = :projectId";
 
 		$stmt = $dbh->prepare($sql);
