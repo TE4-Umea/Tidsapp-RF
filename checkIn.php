@@ -43,13 +43,7 @@
 
 	$stm = $dbh->query($sql);
 	
-	if ($stm->num_rows > 0) {
-		// output data of each row
-		echo "yeet";
-	} else {
-		echo "0 results";
-	}
-    }
+	bot_respond($stm);
       
    }
 
