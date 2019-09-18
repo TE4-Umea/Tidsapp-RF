@@ -33,11 +33,19 @@
 
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
-		$sql = "SELECT * FROM projects WHERE name='" . $args[0] . "'";
+		$sql = "SELECT * FROM projects WHERE name=" . $args[0];
 	
 		bot_respond($sql);
 
-		$stm = $dbh->query($sql);
+		$stmt = $dbh->prepare($sql);
+
+		$stmt->execute();
+
+
+		$result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+		foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
+			echo $v;
+		}
 
 
 		if ($stm->num_rows > 0) {
