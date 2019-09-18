@@ -14,6 +14,16 @@
         die();
     }
 
-    
+    $textCheck = explode(' ', $_POST['text']);
+
+    if($textCheck.sizeof() > 2){
+        bot_respond('Please only use one word for each of the inputs');
+        die();
+    }
+
+
+    function bot_respond($output){
+        echo json_encode($output);
+    }
 
 ?>
