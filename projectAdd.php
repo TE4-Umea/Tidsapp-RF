@@ -10,34 +10,43 @@
 		bot_respond("*Unauthorized token!*");
 		die();
 	}
+	
+	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
+	$filteredId = filter_input(INPUT_GET, "ID", FALITER_VALIDATE_INT);
+	
 	//includes database info
 	include_once 'include/dbinfo.php'
-	
+
 	// Basic use of post data slack sends
-    $args = explode(" ", $_REQUEST['text']);
-    if(count($args) > 1) bot_respond("Too many arguments.");
-        else {
-        bot_respond($args[0]);
-		}
-	$projectAdd = "INSERT INTO projects (name) VALUES ('$args[0]')";
-	$idOfProject = "SELECT id FROM projects WHERE name=$args[0]";
-    $projectMetaAdd = "INSERT INTO projectMeta (projectId) VALUES ($idOfProject)";
+
+	$stmt = $dbh->prepare(SELECT * FROM projects);
+	$stmt->execute();
+
+	$projects = stmt->fetch(PDO::FETCH_ASSOC);
+
+	$projectName = array();
+
+	foreach($projects as $project) {
+		array_push($projectnames, $project['name']);
+	}
+	
+	if (in_array($filteredProjectName, $projectNames)) {
+		bot_respond('Project already exist');
+		die();
+	}
+
+	$stmt = $dbh->prepare("INSERT INTO `projects`(`id`, `name`) VALUES name = :name");
+	$stmt->bindParam(':name', $filteredProjectName);
+	$stmt->execute();
+
+	$stmt = $dbh->prepare("INSERT * INTO `projectMeta` VALUES projectId = :id");
+	$stmt->bindParam(':id', $filteredId);
+	$stmt->execute();
     
-	// This can used for debugging
-	dumper($_REQUEST);
-	
-	
-	/*
-		Helper Functions
-	*/
-	
+		
 	// Send information back to slack
 	function bot_respond($output){
 		echo json_encode($output);
 	}
-	
-	function dumper($request){
-        echo "<pre>" . print_r($request, 1) . "</pre>";
-    }
 	
 ?>
