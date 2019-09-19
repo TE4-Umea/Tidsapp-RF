@@ -94,7 +94,7 @@ function getUserId($pdo, $user_user_id)
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	botRespond("getUserId", $result);
-	if($result = false) return false;
+	if($result == false) return false;
 	else return array_values($result)[0];
 }
 
