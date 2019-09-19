@@ -7,7 +7,7 @@ $tokens = array(
 
 // check auth
 if (!in_array($_REQUEST['token'], $tokens)) {
-	botRespond("*Unauthorized token!*");
+	botRespond("ERROR", "*Unauthorized token!*");
 	die();
 }
 
@@ -26,20 +26,20 @@ else {
 	//get user id.
 	$user_id = getUserId($dbh, $user_user_id);
 	if ($user_id == false) {
-		botRespond("Could not find user id");
+		botRespond("ERROR", "Could not find user id");
 		addNewUser($dbh, $user_user_id);
 		$user_id = getUserId($dbh, $user_user_id);
 		if($user_id == false) die("Could not get user");
-		else botRespond("Added new user.");
+		else botRespond("DB", "Added new user.");
 	}
-	botRespond($user_id);
+	botRespond("user_id", $user_id);
 
 
 	$user_meta = getUserMeta($dbh, $user_id);
 	if($user_meta == false){
 
 	}
-	botRespond($user_meta);
+	botRespond("user_meta", $user_meta);
 
 	// Check if there are no arguments.
 	if ($args[0] == "") {
@@ -49,15 +49,15 @@ else {
 		//TODO: Set any active project to inactive.
 		//TODO: Set user to active on project.
 		$proj_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
-		botRespond($proj_name);
+		botRespond("project_name",$proj_name);
 
 		// get project id.
 		$proj_id = getProjectId($dbh, $proj_name);
-		botRespond($proj_id);
+		botRespond("project_id",$proj_id);
 
 		// get project meta.
 		$proj_meta = getProjectMeta($dbh, $proj_id);
-		botRespond($proj_meta);
+		botRespond("project_meta",$proj_meta);
 	}
 }
 
@@ -90,7 +90,7 @@ function getUserId($pdo, $user_user_id)
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 	$result =  array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
-	botRespond($result);
+	botRespond("getUserId", $result);
 	return $result;
 }
 
@@ -140,8 +140,8 @@ function getProjectMeta($pdo, $project_id)
 */
 
 // Send information back to slack
-function botRespond($output)
+function botRespond($tag, $output)
 {
-	echo ($output) . "<br>";
+	echo ($tag) . "<br>";
 	echo json_encode($output) . "<br><br>";
 }
