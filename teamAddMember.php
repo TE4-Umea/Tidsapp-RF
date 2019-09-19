@@ -41,7 +41,7 @@
         die();
     }
     //Adds member to team in database
-    $stmt = $dbh->prepare("INSERT INTO teamMeta(id, teamId, metaKey value) VALUES (teamId = :teamId, metaKey = :metaKey, value = :value)");
+    $stmt = $dbh->prepare("INSERT INTO teamMeta(id, teamId, metaKey, value) VALUES (teamId = :teamId, metaKey = :metaKey, value = :value)");
     $stmt->bindParam(':teamId', $id);
     $stmt->bindParam(':metaKey', $metaKey);
     $stmt->bindParam(':value', $filteredUserName);
