@@ -15,7 +15,7 @@
     }
 
     $textCheck = explode(' ', $_POST['text']);
-    //Checks id command is written correctly
+    //Checks if command is written correctly
     if($textCheck.sizeof() > 2){
         bot_respond('Please only use one word for each of the inputs');
         die();
