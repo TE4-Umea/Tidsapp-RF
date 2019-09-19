@@ -17,7 +17,7 @@ $args = explode(" ", $_REQUEST['text']);
 //Throw error if there are too many arguments.
 if (count($args) > 1) die("Too many arguments.");
 else {
-	
+	$user_id = $_REQUEST['user_id'];
 	// Load database info from dbinfo.
 	include_once 'include/dbinfoExample.php';
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
