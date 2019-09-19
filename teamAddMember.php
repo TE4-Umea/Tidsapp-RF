@@ -3,7 +3,7 @@
     $tokens = array(
         "P2zoHA16O3ZuQQpQYpE7EC7M"
     );
-
+    //Checks if token is correct
     if(!in_array($_REQUEST['token'], $tokens)){
         bot_respond("Unauthorized Token!");
         die();
@@ -15,7 +15,7 @@
     }
 
     $textCheck = explode(' ', $_POST['text']);
-
+    //Checks id command is written correctly
     if($textCheck.sizeof() > 2){
         bot_respond('Please only use one word for each of the inputs');
         die();
@@ -35,12 +35,12 @@
     $stmt->execute();
 
     $id = $stmt->fetch(PDO::FETCH_ASSOC)[0];
-
+    //Checks if the team written exist
     if($id == false){
         bot_respond('That team does not exist.');
         die();
     }
-
+    //Adds member to team in database
     $stmt = $dbh->prepare("INSERT INTO teamMeta(id, teamId, metaKey value) VALUES (teamId = :teamId, metaKey = :metaKey, value = :value)");
     $stmt->bindParam(':teamId', $id);
     $stmt->bindParam(':metaKey', $metaKey);
