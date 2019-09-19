@@ -4,13 +4,13 @@
         "P2zoHA16O3ZuQQpQYpE7EC7M"
     );
     
-	// check auth
+	// Check auth.
 	if (!in_array($_REQUEST['token'], $tokens)) {
 		bot_respond("*Unauthorized token!*");
 		die();
 	}
     
-    // Checks if your command input is correct and matches an existing team and name.
+    // Check if your command input is correct and matches an existing teamname and username.
     if(!isset($_POST['text'])){
         bot_respond('Please write a team and user name.');
         die();
@@ -28,14 +28,16 @@
         die();
     }
     
-    // Removes the specified user from the specified team.
+    // Filter the first and second input, teamname and username.
     $filteredTeamName = filter_var($textCheck[0], FILTER_SANITIZE_STRING);
     $filteredUserName = filter_var($textCheck[1], FILTER_SANITIZE_STRING);
     
     $metaKey = 'Member';
     
+    // Include databse info.
     include_once 'include/dbinfo.php';
     
+    // fetch and check if the teamname input exist, throw error message if not.
     $stmt = $dbh->prepare("SELECT id FROM teams WHERE name = :name");
     $stmt->bindParam(':name', $filteredTeamName);
     $stmt->execute();
@@ -47,12 +49,14 @@
         die();
     }
     
+    // Remove the specified user from the specified team.
     $stmt = $dbh->prepare("DELETE FROM teamMeta(id, teamId, metaKey, value) WHERE (teamId = :teamId, metaKey = :metaKey, value = :value)");
     $stmt->bindParam(':teamId', $id);
     $stmt->bindParam(':metaKey', $metaKey);
     $stmt->bindParam(':value', $filteredUserName);
     $stmt->execute();
     
+    // Send information back to slack.
     function bot_respond($output){
         echo json_encode($output);
     }
