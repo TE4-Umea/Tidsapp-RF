@@ -49,7 +49,7 @@ function get_project_id($pdo, $project_name)
 	$stmt = $pdo->prepare($sql);
 	$stmt->bindParam(':name', $project_name);
 	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+	$result =  $stmt->fetch(PDO::FETCH_ASSOC)[0];
 	return $result;
 }
 
