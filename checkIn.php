@@ -13,10 +13,15 @@ if (!in_array($_REQUEST['token'], $tokens)) {
 
 //split arguments into array.
 $args = explode(" ", $_REQUEST['text']);
+
 //Throw error if there are too many arguments.
 if (count($args) > 1) die("Too many arguments.");
 else {
-
+	
+	// Load database info from dbinfo.
+	include_once 'include/dbinfoExample.php';
+	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	
 	// Check if there are no arguments.
 	if ($args[0] == "") {
 		//TODO: Set user to active on "other".
@@ -24,20 +29,16 @@ else {
 
 		//TODO: Set any active project to inactive.
 		//TODO: Set user to active on project.
-		$proj_name = $args[0]; // first argument specifes project name.
-
-
-		include_once 'include/dbinfoExample.php';
-		$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-		bot_respond($args[0]);
+		$proj_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
+		bot_respond($proj_name);
 
 		// get project id.
 		$proj_id = get_project_id($dbh, $proj_name);
+		bot_respond($proj_name);
 
 		// get project meta.
 		$proj_meta = get_project_meta($dbh, $proj_id);
-		bot_respond($result);
+		bot_respond($proj_meta);
 	}
 }
 
