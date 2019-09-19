@@ -47,7 +47,7 @@
         die();
     }
     
-    $stmt = $dbh->prepare("DELETE FROM teamMeta(id, teamId, metaKey value) WHERE (teamId = :teamId, metaKey = :metaKey, value = :value)");
+    $stmt = $dbh->prepare("DELETE FROM teamMeta(id, teamId, metaKey, value) WHERE (teamId = :teamId, metaKey = :metaKey, value = :value)");
     $stmt->bindParam(':teamId', $id);
     $stmt->bindParam(':metaKey', $metaKey);
     $stmt->bindParam(':value', $filteredUserName);
