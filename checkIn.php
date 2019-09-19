@@ -11,18 +11,21 @@ if (!in_array($_REQUEST['token'], $tokens)) {
 	die();
 }
 
-$user_user_id = $_REQUEST['user_id'];
+$req_user_user_id = $_REQUEST['user_id'];
 
-//split arguments into array.
+// split arguments into array.
 $args = explode(" ", $_REQUEST['text']);
 
-//Throw error if there are too many arguments.
+// Throw error if there are too many arguments.
 if (count($args) > 1) die("Too many arguments.");
 else {
 	// Load database info from dbinfo.
 	include_once 'include/dbinfoExample.php';
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+	$user_user_id = filter_var($req_user_user_id, FILTER_SANITIZE_STRING);
+	botRespond("user_user_id", $user_user_id);
+	
 	//get user id.
 	$user_id = getUserId($dbh, $user_user_id);
 	if ($user_id == false) {
@@ -75,7 +78,7 @@ function addNewUser($pdo, $user_user_id){
 
 function addNewUserMeta($pdo, $user_id){
 	$stmt = $pdo->prepare("INSERT INTO userMeta(id, userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
-	$stmt->bindParam(':userId', $pdo, $user_id);
+	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':metaKey', time());
 	$stmt->bindParam(':value', 0);
 	$stmt->execute();
@@ -89,7 +92,7 @@ function getUserId($pdo, $user_user_id)
 	$stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
-	$result =  array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+	$result = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
 	botRespond("getUserId", $result);
 	return $result;
 }
