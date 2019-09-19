@@ -75,6 +75,6 @@ function get_project_meta($pdo, $project_id)
 // Send information back to slack
 function bot_respond($output)
 {
-	echo ($output);
-	echo json_encode($output) . "<br>";
+	echo ($output) . "<br>";
+	echo json_encode($output) . "<br><br>";
 }
