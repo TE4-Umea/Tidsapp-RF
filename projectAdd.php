@@ -10,6 +10,18 @@
 		bot_respond("*Unauthorized token!*");
 		die();
 	}
+
+	//Check for if the command has something written
+	if(!isset($_POST['text'])){
+        bot_respond('Please write a project name.');
+        die();
+    }
+	
+	$nameCheck = explode(" ", $_POST['text']);
+	
+	if($nameCheck.sizeof() > 1){
+        bot_respond('Please make the project name only one word.');
+    }
 	
 	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
 	
