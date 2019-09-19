@@ -26,11 +26,11 @@ else {
 	//get user id.
 	$user_id = getUserId($dbh, $user_user_id);
 	if ($user_id == false) {
-		bot_respond("Could not find user id");
+		botRespond("Could not find user id");
 		addNewUser($dbh, $user_user_id);
 		$user_id = getUserId($dbh, $user_user_id);
 		if($user_id == false) die("Could not get user");
-		else bot_respond("Added new user.");
+		else botRespond("Added new user.");
 	}
 	botRespond($user_id);
 
@@ -90,7 +90,7 @@ function getUserId($pdo, $user_user_id)
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 	$result =  array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
-	bot_respond($result);
+	botRespond($result);
 	return $result;
 }
 
