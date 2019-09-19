@@ -34,7 +34,7 @@ else {
 
 		// get project id.
 		$proj_id = get_project_id($dbh, $proj_name);
-		bot_respond($proj_name);
+		bot_respond($proj_id);
 
 		// get project meta.
 		$proj_meta = get_project_meta($dbh, $proj_id);
