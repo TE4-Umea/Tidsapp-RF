@@ -29,12 +29,11 @@
 		$dbh->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 		
 		$sql = "SELECT id FROM projects WHERE name = :name";
-		echo($args[0]);
+		bot_respond($args[0]);
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':name', $args[0]);
 		$stmt->execute(); 
 		$result = $stmt->fetch(PDO::FETCH_ASSOC);
-		echo $result[0];
 		$sql = "SELECT * FROM projectMeta WHERE projectId = :projectId";
 		$stmt = $dbh->prepare($sql);
 		$stmt->bindParam(':projectId', $result[0]);
@@ -51,6 +50,6 @@
 	
 	// Send information back to slack
 	function bot_respond($output){
-		echo json_encode($output);
+		echo json_encode($output . "<br>");
 	}
 ?>
