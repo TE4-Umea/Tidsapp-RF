@@ -36,7 +36,7 @@ else {
 		$proj_id = get_project_id($dbh, $proj_name);
 		bot_respond($proj_id);
 
-		bot_respond(count($proj_id));
+		bot_respond($proj_id[0]);
 
 		// get project meta.
 		$proj_meta = get_project_meta($dbh, $proj_id);
