@@ -50,7 +50,8 @@ function get_project_id($pdo, $project_name)
 	$stmt->bindParam(':name', $project_name);
 	$stmt->execute();
 	$result =  $stmt->fetch(PDO::FETCH_ASSOC);
-	return $result;
+	if($result == false) die("Could not find project id");
+	else return $result;
 }
 
 // fetch the projectMeta of the specified project from database using projectId.
@@ -61,7 +62,8 @@ function get_project_meta($pdo, $project_id)
 	$stmt->bindParam(':projectId', $project_id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	return $result;
+	if($result == false) die("Could not find project meta.");
+	else return $result;
 }
 
 /*
@@ -71,5 +73,6 @@ function get_project_meta($pdo, $project_id)
 // Send information back to slack
 function bot_respond($output)
 {
+	echo ($output);
 	echo json_encode($output) . "<br>";
 }
