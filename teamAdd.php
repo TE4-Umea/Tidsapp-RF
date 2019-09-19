@@ -2,12 +2,12 @@
     $tokens = array(
         "P2zoHA16O3ZuQQpQYpE7EC7M"
     );
-
+    //Check if token matches
     if(!in_array($_REQUEST['token'], $tokens)){
         bot_respond("Unauthorized Token!");
         die();
     }
-
+    //Check for if the command has something written
     if(!isset($_POST['text'])){
         bot_respond('Please write a team name.');
         die();
@@ -29,16 +29,16 @@
     $teams = $stmt->fetch(PDO::FETCH_ASSOC);
 
     $teamNames = array();
-
+    
     foreach($teams as $team){
         array_push($teamNames, $team['name']);
     }
-
+    //Check if the team already exist
     if(in_array($filteredTeamName, $teamNames)){
         bot_respond('Team already exist');
         die();
     }
-
+    //Create team in database
     $stmt = $dbh->prepare("INSERT INTO `teams`(`id`, `name`) VALUES name = :name");
     $stmt->bindParam(':name', $filteredTeamName);
     $stmt->execute();
