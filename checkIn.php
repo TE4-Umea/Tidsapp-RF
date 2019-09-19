@@ -90,6 +90,7 @@ function getUserId($pdo, $user_user_id)
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 	$result =  array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+	bot_respond($result);
 	return $result;
 }
 
