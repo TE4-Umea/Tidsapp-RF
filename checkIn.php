@@ -36,8 +36,6 @@ else {
 		$proj_id = get_project_id($dbh, $proj_name);
 		bot_respond($proj_id);
 
-		bot_respond(array_values($proj_id)[0]);
-
 		// get project meta.
 		$proj_meta = get_project_meta($dbh, $proj_id);
 		bot_respond($proj_meta);
@@ -51,7 +49,7 @@ function get_project_id($pdo, $project_name)
 	$stmt = $pdo->prepare($sql);
 	$stmt->bindParam(':name', $project_name);
 	$stmt->execute();
-	$result =  $stmt->fetch(PDO::FETCH_ASSOC);
+	$result =  array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
 	if($result == false) die("Could not find project id");
 	else return $result;
 }
