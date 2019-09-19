@@ -25,9 +25,20 @@ else {
 
 	//get user id.
 	$user_id = getUserId($dbh, $user_user_id);
+	if ($user_id == false) {
+		bot_respond("Could not find user id");
+		addNewUser($dbh, $user_user_id);
+		$user_id = getUserId($dbh, $user_user_id);
+		if($user_id == false) die("Could not get user");
+		else bot_respond("Added new user.");
+	}
 	botRespond($user_id);
 
+
 	$user_meta = getUserMeta($dbh, $user_id);
+	if($user_meta == false){
+
+	}
 	botRespond($user_meta);
 
 	// Check if there are no arguments.
@@ -79,8 +90,7 @@ function getUserId($pdo, $user_user_id)
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 	$result =  array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
-	if ($result == false) die("Could not find user id");
-	else return $result;
+	return $result;
 }
 
 // fetch the projectMeta of the specified project from database using projectId.
