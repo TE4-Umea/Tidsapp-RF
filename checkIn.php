@@ -25,7 +25,7 @@ else {
 
 	$user_user_id = filter_var($req_user_user_id, FILTER_SANITIZE_STRING);
 	botRespond("user_user_id", $user_user_id);
-	
+
 	//get user id.
 	$user_id = getUserId($dbh, $user_user_id);
 	if ($user_id == false) {
@@ -92,9 +92,10 @@ function getUserId($pdo, $user_user_id)
 	$stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
-	$result = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	botRespond("getUserId", $result);
-	return $result;
+	if($result = false) return false;
+	else return array_values($result)[0];
 }
 
 // fetch the projectMeta of the specified project from database using projectId.
