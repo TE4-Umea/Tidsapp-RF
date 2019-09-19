@@ -20,6 +20,10 @@
         bot_respond('Please only use one word for each of the inputs');
         die();
     }
+    if($textCheck.sizeof() < 2){
+        bot_respond('Please input both a team and user name.');
+        die();
+    }
 
     $filteredTeamName = filter_var($textCheck[0], FILTER_SANITIZE_STRING);
     $filteredUserName = filter_var($textCheck[1], FILTER_SANITIZE_STRING);
@@ -30,7 +34,7 @@
     $stmt->bindParam(':name', $filteredTeamName);
     $stmt->execute();
 
-    $id = $stmt->fetch(PDO::FETCH)[0];
+    $id = $stmt->fetch(PDO::FETCH_ASSOC)[0];
 
     if($id == false){
         bot_respond('That team does not exist.');
