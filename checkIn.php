@@ -71,7 +71,7 @@ else {
 /* Create */
 
 function addNewUser($pdo, $user_user_id){
-	$stmt = $pdo->prepare("INSERT INTO users(id, userId) VALUES (userId = :userId)");
+	$stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 }
