@@ -67,9 +67,13 @@ else {
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
 
 		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-		if ($connection_id == false) createNewProjectConnection($dbh, $user_id, $project_id);
+		if ($connection_id == false) {
+			createNewProjectConnection($dbh, $user_id, $project_id);
+			$connection_id = getProjectConnection($dbh, $user_id, $project_id);
+			if ($connection_id == false) die("Could not get connection id.");
+		}
 
-		unsetActiveProject($dbh, $user_id);
+ 		unsetActiveProject($dbh, $user_id);
 
 
 		setActiveProject($dbh, $user_id, $project_id);
@@ -138,7 +142,7 @@ function getProjectId($pdo, $project_name)
 	$stmt->bindParam(':name', $project_name);
 	$stmt->execute();
 	$result =  $stmt->fetch(PDO::FETCH_ASSOC);
-	if ($result == false) die("Could not find project id");
+	if ($result == false) return false;
 	else return array_values($result)[0];
 }
 /* projectMeta table */
@@ -167,7 +171,8 @@ function getProjectConnection($pdo, $u_id, $p_id)
 	$stmt->bindParam(':projectId', $p_id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	return $result;
+	if($result == false) return false;
+	else return array_values($result)[0];
 }
 
 // Adds a new project connection to the projectConnections table.
@@ -197,7 +202,7 @@ function unsetActiveProject($pdo, $u_id)
 {
 	$active = 0;
 	$time = time();
-	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = timeSpent + :currentTime - checkedInAt  WHERE userId = :userId");
+	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = (timeSpent + (:currentTime - checkedInAt))  WHERE userId = :userId");
 	$stmt->bindParam(':userId', $u_id);
 	$stmt->bindParam(':active', $active);
 	$stmt->bindParam(':currentTime', $time);
