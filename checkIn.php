@@ -211,6 +211,7 @@ function unsetActiveProject($pdo, $u_id)
 	$stmt->execute();
 	$chekedInAt = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
 	$timeSpent = array_values($stmt->fetch(PDO::FETCH_ASSOC))[1];
+	botRespond("chekedInAt", $chekedInAt);
 	botRespond("timeSpent", $timeSpent);
 	$addedTime = time() - $chekedInAt;
 
