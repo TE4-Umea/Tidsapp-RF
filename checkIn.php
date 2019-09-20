@@ -173,7 +173,7 @@ function createNewProjectConnection($pdo, $user_id, $project_id){
 	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
-	$stmt->bindParam(':active', 0);
+	$stmt->bindParam(':active', false);
 	$stmt->bindParam(':checkedInAt', 0);
 	$stmt->bindParam(':timeSpent', 0);
 	$stmt->execute();
@@ -184,7 +184,7 @@ function setActiveProject($pdo, $user_id, $project_id){
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active AND checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
-	$stmt->bindParam(':active', 1);
+	$stmt->bindParam(':active', true);
 	$stmt->bindParam(':checkedInAt', time());
 	$stmt->execute();
 }
@@ -193,8 +193,8 @@ function setActiveProject($pdo, $user_id, $project_id){
 function unsetActiveProject($pdo, $user_id){
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :inactive AND timeSpent = :currentTime - checkedInAt  WHERE userId = :userId AND active = :active");
 	$stmt->bindParam(':userId', $user_id);
-	$stmt->bindParam(':active', 1);
-	$stmt->bindParam(':inactive', 0);
+	$stmt->bindParam(':active', true);
+	$stmt->bindParam(':inactive', false);
 	$stmt->bindParam(':currentTime', time());
 	$stmt->execute();
 }
