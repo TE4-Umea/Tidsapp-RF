@@ -34,16 +34,14 @@ else {
 		botRespond("ERROR", "Could not find user id");
 		addNewUser($dbh, $user_user_id);
 		$user_id = getUserId($dbh, $user_user_id);
-		if($user_id == false) die("Could not get user");
+		if ($user_id == false) die("Could not get user");
 		else botRespond("DB", "Added new user.");
 	}
 	botRespond("user_id", $user_id);
 
 
 	$user_meta = getUserMeta($dbh, $user_id);
-	if($user_meta == false){
-
-	}
+	if ($user_meta == false) { }
 	botRespond("user_meta", $user_meta);
 
 	// Check if there are no arguments.
@@ -55,25 +53,25 @@ else {
 		//TODO: Set any active project to inactive.
 		//TODO: Set user to active on project.
 		$project_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
-		botRespond("project_name",$project_name);
+		botRespond("project_name", $project_name);
 
 		// get project id.
 		$project_id = getProjectId($dbh, $project_name);
-		botRespond("project_id",$project_id);
+		botRespond("project_id", $project_id);
 
 		// get project meta.
 		$project_meta = getProjectMeta($dbh, $project_id);
-		botRespond("project_meta",$project_meta);
+		botRespond("project_meta", $project_meta);
 
 
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
 
 		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-		if($connection_id == false) createNewProjectConnection($dbh, $user_id, $project_id);
+		if ($connection_id == false) createNewProjectConnection($dbh, $user_id, $project_id);
 
-		unsetActiveProject($dbh, $user_id);
-
-		setActiveProject($dbh, $user_id, $project_id);
+		if (unsetActiveProject($dbh, $user_id)) {
+			setActiveProject($dbh, $user_id, $project_id);
+		}
 	}
 }
 
@@ -82,7 +80,8 @@ else {
 /* Create */
 
 // Add a new user to the users table.
-function addNewUser($pdo, $user_user_id){
+function addNewUser($pdo, $user_user_id)
+{
 	$stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
@@ -91,13 +90,14 @@ function addNewUser($pdo, $user_user_id){
 /* Read */
 
 // fetch the id of the user from database using user_id.
-function getUserId($pdo, $user_user_id){
+function getUserId($pdo, $user_user_id)
+{
 	$stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	botRespond("getUserId", $result);
-	if($result == false) return false;
+	if ($result == false) return false;
 	else return array_values($result)[0];
 }
 
@@ -105,7 +105,8 @@ function getUserId($pdo, $user_user_id){
 
 
 // Add a new userMeta to the userMeta table.
-function addNewUserMeta($pdo, $user_id){
+function addNewUserMeta($pdo, $user_id)
+{
 	$stmt = $pdo->prepare("INSERT INTO userMeta(userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':metaKey', time());
@@ -123,7 +124,7 @@ function getUserMeta($pdo, $user_id)
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	//if ($result == false) die("Could not find user meta.");
 	//else
-	 return $result;
+	return $result;
 }
 
 /* projects table */
@@ -158,7 +159,8 @@ function getProjectMeta($pdo, $project_id)
 /* Check in */
 
 // Checks if there is 
-function getProjectConnection($pdo, $user_id, $project_id){
+function getProjectConnection($pdo, $user_id, $project_id)
+{
 	$sql = "SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId";
 	$stmt = $pdo->prepare($sql);
 	$stmt->bindParam(':userId', $user_id);
@@ -169,7 +171,8 @@ function getProjectConnection($pdo, $user_id, $project_id){
 }
 
 // Adds a new project connection to the projectConnections table.
-function createNewProjectConnection($pdo, $user_id, $project_id){
+function createNewProjectConnection($pdo, $user_id, $project_id)
+{
 	$stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId) VALUES (userId = :userId, projectId = :projectId)");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
@@ -177,7 +180,8 @@ function createNewProjectConnection($pdo, $user_id, $project_id){
 }
 
 // Checks in on the specified project.
-function setActiveProject($pdo, $user_id, $project_id){
+function setActiveProject($pdo, $user_id, $project_id)
+{
 	$active = 1;
 	$time = time();
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active AND checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
@@ -189,7 +193,8 @@ function setActiveProject($pdo, $user_id, $project_id){
 }
 
 // Checks out on any active project
-function unsetActiveProject($pdo, $user_id){
+function unsetActiveProject($pdo, $user_id)
+{
 	$active = 1;
 	$inactive = 0;
 	$time = time();
@@ -199,6 +204,7 @@ function unsetActiveProject($pdo, $user_id){
 	$stmt->bindParam(':inactive', $inactive);
 	$stmt->bindParam(':currentTime', $time);
 	$stmt->execute();
+	return true;
 }
 
 
