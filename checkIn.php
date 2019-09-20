@@ -184,6 +184,15 @@ function setActiveProject($pdo, $user_id, $project_id){
 	$stmt->execute();
 }
 
+function unsetActiveProject($pdo, $user_id){
+	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :inactive AND timeSpent = :currentTime - checkedInAt  WHERE userId = :userId AND active = :active");
+	$stmt->bindParam(':userId', $user_id);
+	$stmt->bindParam(':active', 1);
+	$stmt->bindParam(':inactive', 0);
+	$stmt->bindParam(':currentTime', time());
+	$stmt->execute();
+}
+
 
 /*
 	Helper Functions
