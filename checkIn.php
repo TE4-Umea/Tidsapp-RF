@@ -204,16 +204,24 @@ function unsetActiveProject($pdo, $u_id)
 	$active = 0;
 	
 	
-	$stmt = $pdo->prepare("SELECT checkedInAt, timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
+	$stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections WHERE userId = :userId AND active = :true");
 	
 	$stmt->bindParam(':userId', $u_id);
 	$stmt->bindParam(':true', $true);
 	$stmt->execute();
 	$chekedInAt = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
-	$timeSpent = array_values($stmt->fetch(PDO::FETCH_ASSOC))[1];
-	botRespond("chekedInAt", $chekedInAt);
+
+	$stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
+	
+	$stmt->bindParam(':userId', $u_id);
+	$stmt->bindParam(':true', $true);
+	$stmt->execute();
+	$timeSpent = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+
+
+	$timeSpent += (time() - $chekedInAt);
+
 	botRespond("timeSpent", $timeSpent);
-	$addedTime = time() - $chekedInAt;
 
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = timeSpent + :addedTime WHERE userId = :userId AND active = :true");
 	$stmt->bindParam(':userId', $u_id);
