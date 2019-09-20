@@ -54,11 +54,11 @@ else {
 
 		//TODO: Set any active project to inactive.
 		//TODO: Set user to active on project.
-		$proj_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
+		$project_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
 		botRespond("project_name",$proj_name);
 
 		// get project id.
-		$proj_id = getProjectId($dbh, $proj_name);
+		$project_id = getProjectId($dbh, $proj_name);
 		botRespond("project_id",$proj_id);
 
 		// get project meta.
@@ -68,7 +68,9 @@ else {
 
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
 
-		getProjectConnection($dbh, $user_meta, $project_meta);
+		getProjectConnection($dbh, $user_id, $project_id);
+
+		setActiveProject($dbh, $user_id, $project_id)
 	}
 }
 
