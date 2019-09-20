@@ -209,7 +209,7 @@ function unsetActiveProject($pdo, $u_id)
 	$stmt->bindParam(':userId', $u_id);
 	$stmt->bindParam(':true', $true);
 	$stmt->execute();
-	$chekedInAt = $stmt->fetch(PDO::FETCH_ASSOC);
+	$chekedInAt = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
 
 	$addedTime = $time - $chekedInAt;
 
