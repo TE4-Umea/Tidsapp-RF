@@ -200,14 +200,26 @@ function setActiveProject($pdo, $u_id, $p_id)
 // Checks out on any active project
 function unsetActiveProject($pdo, $u_id)
 {
+	$true = 1;
 	$active = 0;
+	
 	$time = time();
-	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = (timeSpent + (:currentTime - checkedInAt))  WHERE userId = :userId");
+	$stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections  WHERE userId = :userId AND active = :true");
+	
 	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':active', $active);
-	$stmt->bindParam(':currentTime', $time);
+	$stmt->bindParam(':true', $true);
 	$stmt->execute();
-	return true;
+	$chekedInAt = $stmt->fetch(PDO::FETCH_ASSOC);
+
+	$addedTime = $time - $chekedInAt;
+
+	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = timeSpent + :addedTime WHERE userId = :userId AND active = :true");
+	$stmt->bindParam(':userId', $u_id);
+	$stmt->bindParam(':true', $true);
+	$stmt->bindParam(':active', $active);
+	$stmt->bindParam(':addedTime', $addedTime);
+	
+	$stmt->execute();
 }
 
 
