@@ -172,7 +172,7 @@ function getProjectConnection($pdo, $user_id, $project_id){
 function createNewProjectConnection($pdo, $user_id, $project_id){
 	$f = 0;
 	$z = 0;
-	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
+	$stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
 	$stmt->bindParam(':active', $f);
