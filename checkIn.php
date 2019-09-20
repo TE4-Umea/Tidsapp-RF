@@ -223,11 +223,11 @@ function unsetActiveProject($pdo, $u_id)
 
 	botRespond("timeSpent", $timeSpent);
 
-	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = timeSpent + :addedTime WHERE userId = :userId AND active = :true");
+	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = :timeSpent WHERE userId = :userId AND active = :true");
 	$stmt->bindParam(':userId', $u_id);
 	$stmt->bindParam(':true', $true);
 	$stmt->bindParam(':active', $active);
-	$stmt->bindParam(':addedTime', $addedTime);
+	$stmt->bindParam(':timeSpent', $timeSpent);
 	
 	$stmt->execute();
 }
