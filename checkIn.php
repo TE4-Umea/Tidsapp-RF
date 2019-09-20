@@ -170,11 +170,9 @@ function getProjectConnection($pdo, $user_id, $project_id){
 
 // Adds a new project connection to the projectConnections table.
 function createNewProjectConnection($pdo, $user_id, $project_id){
-	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = 0, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
+	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = 0, checkedInAt = 0, timeSpent = 0");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
-	$stmt->bindParam(':checkedInAt', 0);
-	$stmt->bindParam(':timeSpent', 0);
 	$stmt->execute();
 }
 
