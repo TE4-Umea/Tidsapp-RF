@@ -49,6 +49,7 @@ else {
 	// Check if there are no arguments.
 	if ($args[0] == "") {
 		//TODO: Set user to active on "other".
+
 	} else {
 
 		//TODO: Set any active project to inactive.
@@ -61,36 +62,31 @@ else {
 		botRespond("project_id",$proj_id);
 
 		// get project meta.
-		$proj_meta = getProjectMeta($dbh, $proj_id);
-		botRespond("project_meta",$proj_meta);
+		$project_meta = getProjectMeta($dbh, $proj_id);
+		botRespond("project_meta",$project_meta);
+
+
+		//if("PROJECT IS ACTIVE")checkoutActiveProject();
+
+		getProjectConnection($dbh, $user_meta, $project_meta);
 	}
 }
 
-/*
-	User
-*/
+/* users table */
 
 /* Create */
 
+// Add a new user to the users table.
 function addNewUser($pdo, $user_user_id){
 	$stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
 }
 
-function addNewUserMeta($pdo, $user_id){
-	$stmt = $pdo->prepare("INSERT INTO userMeta(id, userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
-	$stmt->bindParam(':userId', $user_id);
-	$stmt->bindParam(':metaKey', time());
-	$stmt->bindParam(':value', 0);
-	$stmt->execute();
-}
-
 /* Read */
 
 // fetch the id of the user from database using user_id.
-function getUserId($pdo, $user_user_id)
-{
+function getUserId($pdo, $user_user_id){
 	$stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
 	$stmt->bindParam(':userId', $user_user_id);
 	$stmt->execute();
@@ -98,6 +94,18 @@ function getUserId($pdo, $user_user_id)
 	botRespond("getUserId", $result);
 	if($result == false) return false;
 	else return array_values($result)[0];
+}
+
+/* userMeta table */
+
+
+// Add a new userMeta to the userMeta table.
+function addNewUserMeta($pdo, $user_id){
+	$stmt = $pdo->prepare("INSERT INTO userMeta(id, userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
+	$stmt->bindParam(':userId', $user_id);
+	$stmt->bindParam(':metaKey', time());
+	$stmt->bindParam(':value', 0);
+	$stmt->execute();
 }
 
 // fetch the projectMeta of the specified project from database using projectId.
@@ -113,9 +121,7 @@ function getUserMeta($pdo, $user_id)
 	 return $result;
 }
 
-/*
-	Project
-*/
+/* projects table */
 
 // fetch the id of the specified project from database using projectName.
 function getProjectId($pdo, $project_name)
@@ -129,6 +135,8 @@ function getProjectId($pdo, $project_name)
 	else return $result;
 }
 
+/* projectMeta table */
+
 // fetch the projectMeta of the specified project from database using projectId.
 function getProjectMeta($pdo, $project_id)
 {
@@ -140,6 +148,29 @@ function getProjectMeta($pdo, $project_id)
 	if ($result == false) die("Could not find project meta.");
 	else return $result;
 }
+
+
+/* Check in */
+
+function getProjectConnection($pdo, $user_id, $project_id){
+	$sql = "SELECT * FROM projectConnections WHERE userId = :userId AND projectId = :projectId";
+	$stmt = $pdo->prepare($sql);
+	$stmt->bindParam(':userId', $user_id);
+	$stmt->bindParam(':projectId', $project_id);
+	$stmt->execute();
+	$result = $stmt->fetch(PDO::FETCH_ASSOC);
+	if ($result == false) createNewProjectConnection();
+	else return $result;
+}
+
+function createNewProjectConnection(){
+	
+}
+
+function checkIn($user_meta, $project_meta){
+	
+}
+
 
 /*
 	Helper Functions
