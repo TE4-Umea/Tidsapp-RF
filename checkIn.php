@@ -16,6 +16,8 @@ $req_user_user_id = $_REQUEST['user_id'];
 // split arguments into array.
 $args = explode(" ", $_REQUEST['text']);
 
+botRespond("Time", time());
+
 // Throw error if there are too many arguments.
 if (count($args) > 1) die("Too many arguments.");
 else {
