@@ -106,7 +106,7 @@ function getUserId($pdo, $user_user_id){
 
 // Add a new userMeta to the userMeta table.
 function addNewUserMeta($pdo, $user_id){
-	$stmt = $pdo->prepare("INSERT INTO userMeta(id, userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
+	$stmt = $pdo->prepare("INSERT INTO userMeta(userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':metaKey', time());
 	$stmt->bindParam(':value', 0);
@@ -172,7 +172,7 @@ function getProjectConnection($pdo, $user_id, $project_id){
 function createNewProjectConnection($pdo, $user_id, $project_id){
 	$f = 0;
 	$z = 0;
-	$stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
+	$stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent)");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
 	$stmt->bindParam(':active', $f);
