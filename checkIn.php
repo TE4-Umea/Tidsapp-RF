@@ -69,6 +69,7 @@ else {
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
 
 		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
+		if($connection_id == false) if ($result == false) createNewProjectConnection($pdo, $user_id, $project_id);
 
 		unsetActiveProject($dbh, $user_id);
 
@@ -164,8 +165,7 @@ function getProjectConnection($pdo, $user_id, $project_id){
 	$stmt->bindParam(':projectId', $project_id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	if ($result == false) createNewProjectConnection($pdo, $user_id, $project_id);
-	else return $result;
+	return $result;
 }
 
 // Adds a new project connection to the projectConnections table.
