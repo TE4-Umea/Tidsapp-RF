@@ -60,8 +60,8 @@ else {
 		botRespond("project_id", $project_id);
 
 		// get project meta.
-		$project_meta = getProjectMeta($dbh, $project_id);
-		botRespond("project_meta", $project_meta);
+		//$project_meta = getProjectMeta($dbh, $project_id);
+		//botRespond("project_meta", $project_meta);
 
 
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
