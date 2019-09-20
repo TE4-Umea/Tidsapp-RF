@@ -55,14 +55,14 @@ else {
 		//TODO: Set any active project to inactive.
 		//TODO: Set user to active on project.
 		$project_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
-		botRespond("project_name",$proj_name);
+		botRespond("project_name",$project_name);
 
 		// get project id.
-		$project_id = getProjectId($dbh, $proj_name);
-		botRespond("project_id",$proj_id);
+		$project_id = getProjectId($dbh, $project_name);
+		botRespond("project_id",$project_id);
 
 		// get project meta.
-		$project_meta = getProjectMeta($dbh, $proj_id);
+		$project_meta = getProjectMeta($dbh, $project_id);
 		botRespond("project_meta",$project_meta);
 
 
@@ -175,8 +175,13 @@ function createNewProjectConnection($pdo, $user_id, $project_id){
 	$stmt->execute();
 }
 
-function checkIn($user_meta, $project_meta){
-	
+function setActiveProject($pdo, $user_id, $project_id){
+	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active AND checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
+	$stmt->bindParam(':userId', $user_id);
+	$stmt->bindParam(':projectId', $project_id);
+	$stmt->bindParam(':active', 1);
+	$stmt->bindParam(':checkedInAt', time());
+	$stmt->execute();
 }
 
 
