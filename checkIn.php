@@ -170,31 +170,36 @@ function getProjectConnection($pdo, $user_id, $project_id){
 
 // Adds a new project connection to the projectConnections table.
 function createNewProjectConnection($pdo, $user_id, $project_id){
+	$f = 0;
+	$z = 0;
 	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
-	$stmt->bindParam(':active', '0');
-	$stmt->bindParam(':checkedInAt', '0');
-	$stmt->bindParam(':timeSpent', '0');
+	$stmt->bindParam(':active', $f);
+	$stmt->bindParam(':checkedInAt', $z);
+	$stmt->bindParam(':timeSpent', $z);
 	$stmt->execute();
 }
 
 // Checks in on the specified project.
 function setActiveProject($pdo, $user_id, $project_id){
+	$t = 1;
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active AND checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
-	$stmt->bindParam(':active', '1');
+	$stmt->bindParam(':active', $t);
 	$stmt->bindParam(':checkedInAt', time());
 	$stmt->execute();
 }
 
 // Checks out on any active project
 function unsetActiveProject($pdo, $user_id){
+	$t = 1;
+	$f = 0;
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :inactive AND timeSpent = :currentTime - checkedInAt  WHERE userId = :userId AND active = :active");
 	$stmt->bindParam(':userId', $user_id);
-	$stmt->bindParam(':active', '1');
-	$stmt->bindParam(':inactive', '0');
+	$stmt->bindParam(':active', $t);
+	$stmt->bindParam(':inactive', $f);
 	$stmt->bindParam(':currentTime', time());
 	$stmt->execute();
 }
