@@ -68,9 +68,11 @@ else {
 
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
 
-		getProjectConnection($dbh, $user_id, $project_id);
+		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
 
-		setActiveProject($dbh, $user_id, $project_id)
+		unsetActiveProject($dbh, $user_id);
+
+		setActiveProject($dbh, $user_id, $project_id);
 	}
 }
 
@@ -154,8 +156,9 @@ function getProjectMeta($pdo, $project_id)
 
 /* Check in */
 
+// Checks if there is 
 function getProjectConnection($pdo, $user_id, $project_id){
-	$sql = "SELECT * FROM projectConnections WHERE userId = :userId AND projectId = :projectId";
+	$sql = "SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId";
 	$stmt = $pdo->prepare($sql);
 	$stmt->bindParam(':userId', $user_id);
 	$stmt->bindParam(':projectId', $project_id);
@@ -165,6 +168,7 @@ function getProjectConnection($pdo, $user_id, $project_id){
 	else return $result;
 }
 
+// Adds a new project connection to the projectConnections table.
 function createNewProjectConnection($pdo, $user_id, $project_id){
 	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
 	$stmt->bindParam(':userId', $user_id);
@@ -175,6 +179,7 @@ function createNewProjectConnection($pdo, $user_id, $project_id){
 	$stmt->execute();
 }
 
+// Checks in on the specified project.
 function setActiveProject($pdo, $user_id, $project_id){
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active AND checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
 	$stmt->bindParam(':userId', $user_id);
@@ -184,6 +189,7 @@ function setActiveProject($pdo, $user_id, $project_id){
 	$stmt->execute();
 }
 
+// Checks out on any active project
 function unsetActiveProject($pdo, $user_id){
 	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :inactive AND timeSpent = :currentTime - checkedInAt  WHERE userId = :userId AND active = :active");
 	$stmt->bindParam(':userId', $user_id);
