@@ -69,7 +69,7 @@ else {
 		//if("PROJECT IS ACTIVE")checkoutActiveProject();
 
 		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-		if($connection_id == false) if ($result == false) createNewProjectConnection($pdo, $user_id, $project_id);
+		if($connection_id == false) if ($result == false) createNewProjectConnection($dbh, $user_id, $project_id);
 
 		unsetActiveProject($dbh, $user_id);
 
