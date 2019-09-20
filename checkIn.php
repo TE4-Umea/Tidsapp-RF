@@ -159,12 +159,18 @@ function getProjectConnection($pdo, $user_id, $project_id){
 	$stmt->bindParam(':projectId', $project_id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	if ($result == false) createNewProjectConnection();
+	if ($result == false) createNewProjectConnection($pdo, $user_id, $project_id);
 	else return $result;
 }
 
-function createNewProjectConnection(){
-	
+function createNewProjectConnection($pdo, $user_id, $project_id){
+	$stmt = $pdo->prepare("INSERT INTO projectConnections(id, userId, projectId, active, checkedInAt, timeSpent) VALUES (userId = :userId, projectId = :projectId, active = :active, checkedInAt = :checkedInAt, timeSpent = :timeSpent");
+	$stmt->bindParam(':userId', $user_id);
+	$stmt->bindParam(':projectId', $project_id);
+	$stmt->bindParam(':active', 0);
+	$stmt->bindParam(':checkedInAt', 0);
+	$stmt->bindParam(':timeSpent', 0);
+	$stmt->execute();
 }
 
 function checkIn($user_meta, $project_meta){
