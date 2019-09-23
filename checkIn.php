@@ -23,9 +23,7 @@ $args = explode(" ", $_REQUEST['text']);
 
 botRespond("Time", time());
 
-botRespond("slackId", $slackId);
-
-dumper($_REQUEST['user_id']);
+botRespond("SlackId", $slackId);
 
 // Throw error if there are too many arguments.
 if (count($args) > 1) {
@@ -39,33 +37,29 @@ if (count($args) > 1) {
 
     //    get user id.
     $userId = getUserId($dbh, $slackId);
-    if (!$userId) {
+    if ($userId == false) {
         botRespond("ERROR", "Could not find user id");
-        //addNewUser($dbh, $filteredSlackId);
-        //$userId = getUserId($dbh, $filteredSlackId);
-        if ($userId == "") {
-            die("Could not get user");
-        }
-
-        //else botRespond("DB", "Added new user.");
+        addNewUser($dbh, $slackId);
+        $userId = getUserId($dbh, $slackId);
+        botRespond("DB", "Added new user.");
     }
-    botRespond("user_id", $userId);
+    botRespond("User id", $userId);
 
      $project_name = "Other"; // Default project name, this will be used if no arguments are provided.
 
      if ($args[0] !== "") {
          $project_name = filter_var($args[0], FILTER_SANITIZE_STRING);
      } // first argument specifes project name.
-     botRespond("project_name", $project_name);
+     botRespond("Project name", $project_name);
 
      //get project id.
      $project_id = getProjectId($dbh, $project_name);
-     botRespond("project_id", $project_id);
+     botRespond("Project ID", $project_id);
 
      $connection_id = getProjectConnection($dbh, $userId, $project_id);
      if ($connection_id == false) {
         createNewProjectConnection($dbh, $userId, $project_id);
-        if ($connection_id == false) die("Could not get connection id.");
+        $connection_id = getProjectConnection($dbh, $userId, $project_id);
     }
 
     unsetActiveProject($dbh, $userId);
@@ -92,13 +86,11 @@ function addNewUser($pdo, $userSlackId)
 // fetch the id of the user from database using user_id.
 function getUserId($pdo, $userSlackId)
 {
-    botRespond("getslackid", $userSlackId);
     $stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
     $stmt->bindParam(':userId', $userSlackId);
     $stmt->execute();
 
     $result = $stmt->fetch();
-    botRespond("USER ID", $result[0]);
     return $result[0];
 }
 
@@ -111,7 +103,6 @@ function getProjectId($pdo, $dbProjectName)
     $stmt->bindParam(':name', $dbProjectName);
     $stmt->execute();
     $result = $stmt->fetch();
-    botRespond("PROJECT ID", $result[0]);
     return $result[0];
 }
 
@@ -161,23 +152,23 @@ function unsetActiveProject($pdo, $dbUserId)
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':true', $true);
     $stmt->execute();
-    $chekedInAt = $stmt->fetch()[0];
+    $chekedInAt = $stmt->fetch();
 
     $stmt = $pdo->prepare("SELECT 'timeSpent' FROM projectConnections WHERE userId = :userId AND active = :true");
 
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':true', $true);
     $stmt->execute();
-    $timeSpent = $stmt->fetch()[0];
-    $timeSpent += (time() - $chekedInAt);
+    $timeSpent = $stmt->fetch();
+    $timeSpent[0] += (time() - $chekedInAt[0]);
 
-    botRespond("timeSpent", $timeSpent);
+    botRespond("timeSpent", $timeSpent[0]);
 
     $stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = :timeSpent WHERE userId = :userId AND active = :true");
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':true', $true);
     $stmt->bindParam(':active', $active);
-    $stmt->bindParam(':timeSpent', $timeSpent);
+    $stmt->bindParam(':timeSpent', $timeSpent[0]);
 
     $stmt->execute();
 }
@@ -189,6 +180,6 @@ Helper Functions
 // Send information back to slack
 function botRespond($tag, $output)
 {
-    echo ($tag) . "<br>";
-    echo json_encode($output) . "<br><br>";
+    echo ($tag) . ": ";
+    echo json_encode($output) . ", ";
 }
