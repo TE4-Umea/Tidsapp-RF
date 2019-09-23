@@ -13,9 +13,9 @@
 
 
 -- Dumping database structure for testDB
-DROP DATABASE IF EXISTS `testDB`;
-CREATE DATABASE IF NOT EXISTS `testDB` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `testDB`;
+#DROP DATABASE IF EXISTS `testDB`;
+#CREATE DATABASE IF NOT EXISTS `testDB` /*!40100 DEFAULT CHARACTER SET latin1 */;
+#USE `testDB`;
 
 -- Dumping structure for table testDB.projectConnections
 DROP TABLE IF EXISTS `projectConnections`;

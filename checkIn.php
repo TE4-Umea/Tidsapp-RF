@@ -1,84 +1,90 @@
 <?php
 
-
-function dumper($request){
+function dumper($request)
+{
     echo "<pre>" . print_r($request, 1) . "</pre>";
 }
 
 // Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
 $tokens = array(
-	"P2zoHA16O3ZuQQpQYpE7EC7M"
+    "P2zoHA16O3ZuQQpQYpE7EC7M",
 );
 
 // check auth
 if (!in_array($_REQUEST['token'], $tokens)) {
-	botRespond("ERROR", "*Unauthorized token!*");
-	die();
+    botRespond("ERROR", "*Unauthorized token!*");
+    die();
 }
 
-$slackId = $_REQUEST['user_id'];
+$slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
 
 // split arguments into array.
 $args = explode(" ", $_REQUEST['text']);
 
 botRespond("Time", time());
 
+botRespond("slackId", $slackId);
+
 dumper($_REQUEST['user_id']);
 
 // Throw error if there are too many arguments.
-if (count($args) > 1) die("Too many arguments.");
-else {
-	// Load database info from dbinfo.
-	include_once 'include/dbinfo.php';
-	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+if (count($args) > 1) {
+    die("Too many arguments.");
+} else {
+    // Load database info from dbinfo.
+    include_once 'include/dbinfo.php';
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	$filteredSlackId = filter_input($slackId, FILTER_SANITIZE_STRING);
-	botRespond("user_user_id", $filteredSlackId);
+    //print_r($dbh);
 
-	//get user id.
-	$user_id = getUserId($dbh, $filteredSlackId);
-	if ($user_id == false) {
-		botRespond("ERROR", "Could not find user id");
-		addNewUser($dbh, $filteredSlackId);
-		$user_id = getUserId($dbh, $filteredSlackId);
-		if ($user_id == false) die("Could not get user");
-		else botRespond("DB", "Added new user.");
-	}
-	botRespond("user_id", $user_id);
+    //    get user id.
+    $userId = getUserId($dbh, $slackId);
+    if (!$userId) {
+        botRespond("ERROR", "Could not find user id");
+        //addNewUser($dbh, $filteredSlackId);
+        //$userId = getUserId($dbh, $filteredSlackId);
+        if ($userId == "") {
+            die("Could not get user");
+        }
 
+        //else botRespond("DB", "Added new user.");
+    }
+    botRespond("user_id", $userId);
 
-	$project_name;
+     $project_name = "Other"; // Default project name, this will be used if no arguments are provided.
 
-	if ($args[0] == "") $project_name = "Other"; // Sets project name to other if no arguments are provided.
-	else $project_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
-	botRespond("project_name", $project_name);
+     if ($args[0] !== "") {
+         $project_name = filter_var($args[0], FILTER_SANITIZE_STRING);
+     } // first argument specifes project name.
+     botRespond("project_name", $project_name);
 
-	// get project id.
-	$project_id = getProjectId($dbh, $project_name);
-	botRespond("project_id", $project_id);
+     //get project id.
+     $project_id = getProjectId($dbh, $project_name);
+     botRespond("project_id", $project_id);
 
-	$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-	if ($connection_id == false) {
-		createNewProjectConnection($dbh, $user_id, $project_id);
-		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-		if ($connection_id == false) die("Could not get connection id.");
-	}
+     $connection_id = getProjectConnection($dbh, $userId, $project_id);
+     if ($connection_id == false) {
+        createNewProjectConnection($dbh, $userId, $project_id);
+        if ($connection_id == false) die("Could not get connection id.");
+    }
 
-	unsetActiveProject($dbh, $user_id);
+    unsetActiveProject($dbh, $userId);
 
-	setActiveProject($dbh, $user_id, $project_id);
+    setActiveProject($dbh, $userId, $project_id);
 }
 
 /* users table */
 
 /* Create */
 
-// Add a new user to the users table.
+//Add a new user to the users table.
 function addNewUser($pdo, $userSlackId)
 {
-	$stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
-	$stmt->bindParam(':userId', $userSlackId);
-	$stmt->execute();
+    $stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
+
+    $stmt->bindParam(':userId', $userSlackId);
+
+    $stmt->execute();
 }
 
 /* Read */
@@ -86,123 +92,103 @@ function addNewUser($pdo, $userSlackId)
 // fetch the id of the user from database using user_id.
 function getUserId($pdo, $userSlackId)
 {
-	$stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
-	$stmt->bindParam(':userId', $userSlackId);
-	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	botRespond("getUserId", $result);
-	if ($result == false) return false;
-	else return array_values($result)[0];
+    botRespond("getslackid", $userSlackId);
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
+    $stmt->bindParam(':userId', $userSlackId);
+    $stmt->execute();
+
+    $result = $stmt->fetch();
+    botRespond("USER ID", $result[0]);
+    return $result[0];
 }
 
 /* projects table */
 
 // fetch the id of the specified project from database using projectName.
-function getProjectId($pdo, $project_name)
+function getProjectId($pdo, $dbProjectName)
 {
-	$sql = "SELECT id FROM projects WHERE name = :name";
-	$stmt = $pdo->prepare($sql);
-	$stmt->bindParam(':name', $project_name);
-	$stmt->execute();
-	$result =  $stmt->fetch(PDO::FETCH_ASSOC);
-	if ($result == false) return false;
-	else return array_values($result)[0];
+    $stmt = $pdo->prepare("SELECT id FROM projects WHERE name = :name");
+    $stmt->bindParam(':name', $dbProjectName);
+    $stmt->execute();
+    $result = $stmt->fetch();
+    botRespond("PROJECT ID", $result[0]);
+    return $result[0];
 }
-/* projectMeta table */
-
-// fetch the projectMeta of the specified project from database using projectId.
-function getProjectMeta($pdo, $project_id)
-{
-	$sql = "SELECT * FROM projectMeta WHERE projectId = :projectId";
-	$stmt = $pdo->prepare($sql);
-	$stmt->bindParam(':projectId', $project_id);
-	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	if ($result == false) die("Could not find project meta.");
-	else return $result;
-}
-
 
 /* Check in */
 
-// Checks if there is 
-function getProjectConnection($pdo, $u_id, $p_id)
+// Checks if there is
+function getProjectConnection($pdo, $dbUserId, $dbProjectId)
 {
-	$sql = "SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId";
-	$stmt = $pdo->prepare($sql);
-	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':projectId', $p_id);
-	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	if ($result == false) return false;
-	else return array_values($result)[0];
+    $stmt = $pdo->prepare("SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':projectId', $dbProjectId);
+    $stmt->execute();
+    $result = $stmt->fetch();
+    return $result[0];
 }
 
 // Adds a new project connection to the projectConnections table.
-function createNewProjectConnection($pdo, $u_id, $p_id)
+function createNewProjectConnection($pdo, $dbUserId, $dbProjectId)
 {
-	$stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId) VALUES (:userId, :projectId)");
-	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':projectId', $p_id);
-	$stmt->execute();
+    $stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId) VALUES (:userId, :projectId)");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':projectId', $dbProjectId);
+    $stmt->execute();
 }
 
 // Checks in on the specified project.
-function setActiveProject($pdo, $u_id, $p_id)
+function setActiveProject($pdo, $dbUserId, $dbProjectId)
 {
-	$active = 1;
-	$time = time();
-	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
-	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':projectId', $p_id);
-	$stmt->bindParam(':active', $active);
-	$stmt->bindParam(':checkedInAt', $time);
-	$stmt->execute();
+    $active = 1;
+    $time = time();
+    $stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':projectId', $dbProjectId);
+    $stmt->bindParam(':active', $active);
+    $stmt->bindParam(':checkedInAt', $time);
+    $stmt->execute();
 }
 
 // Checks out on any active project
-function unsetActiveProject($pdo, $u_id)
+function unsetActiveProject($pdo, $dbUserId)
 {
-	$true = 1;
-	$active = 0;
+    $true = 1;
+    $active = 0;
 
+    $stmt = $pdo->prepare("SELECT 'checkedInAt' FROM projectConnections WHERE userId = :userId AND active = :true");
 
-	$stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections WHERE userId = :userId AND active = :true");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':true', $true);
+    $stmt->execute();
+    $chekedInAt = $stmt->fetch()[0];
 
-	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':true', $true);
-	$stmt->execute();
-	$chekedInAt = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+    $stmt = $pdo->prepare("SELECT 'timeSpent' FROM projectConnections WHERE userId = :userId AND active = :true");
 
-	$stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':true', $true);
+    $stmt->execute();
+    $timeSpent = $stmt->fetch()[0];
+    $timeSpent += (time() - $chekedInAt);
 
-	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':true', $true);
-	$stmt->execute();
-	$timeSpent = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
+    botRespond("timeSpent", $timeSpent);
 
+    $stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = :timeSpent WHERE userId = :userId AND active = :true");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':true', $true);
+    $stmt->bindParam(':active', $active);
+    $stmt->bindParam(':timeSpent', $timeSpent);
 
-	$timeSpent += (time() - $chekedInAt);
-
-	botRespond("timeSpent", $timeSpent);
-
-	$stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = :timeSpent WHERE userId = :userId AND active = :true");
-	$stmt->bindParam(':userId', $u_id);
-	$stmt->bindParam(':true', $true);
-	$stmt->bindParam(':active', $active);
-	$stmt->bindParam(':timeSpent', $timeSpent);
-
-	$stmt->execute();
+    $stmt->execute();
 }
 
-
 /*
-	Helper Functions
-*/
+Helper Functions
+ */
 
 // Send information back to slack
 function botRespond($tag, $output)
 {
-	echo ($tag) . "<br>";
-	echo json_encode($output) . "<br><br>";
+    echo ($tag) . "<br>";
+    echo json_encode($output) . "<br><br>";
 }
