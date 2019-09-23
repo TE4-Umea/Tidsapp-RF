@@ -1,8 +1,13 @@
 <?php
 
+
+function dumper($request){
+    echo "<pre>" . print_r($request, 1) . "</pre>";
+}
+
 // Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
 $tokens = array(
-	"tW0wHpLokfme5zJppcZSJUDg"
+	"P2zoHA16O3ZuQQpQYpE7EC7M"
 );
 
 // check auth
@@ -11,29 +16,31 @@ if (!in_array($_REQUEST['token'], $tokens)) {
 	die();
 }
 
-$req_user_user_id = $_REQUEST['user_id'];
+$slackId = $_REQUEST['user_id'];
 
 // split arguments into array.
 $args = explode(" ", $_REQUEST['text']);
 
 botRespond("Time", time());
 
+dumper($_REQUEST['user_id']);
+
 // Throw error if there are too many arguments.
 if (count($args) > 1) die("Too many arguments.");
 else {
 	// Load database info from dbinfo.
-	include_once 'include/dbinfoExample.php';
+	include_once 'include/dbinfo.php';
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	$user_user_id = filter_var($req_user_user_id, FILTER_SANITIZE_STRING);
-	botRespond("user_user_id", $user_user_id);
+	$filteredSlackId = filter_input($slackId, FILTER_SANITIZE_STRING);
+	botRespond("user_user_id", $filteredSlackId);
 
 	//get user id.
-	$user_id = getUserId($dbh, $user_user_id);
+	$user_id = getUserId($dbh, $filteredSlackId);
 	if ($user_id == false) {
 		botRespond("ERROR", "Could not find user id");
-		addNewUser($dbh, $user_user_id);
-		$user_id = getUserId($dbh, $user_user_id);
+		addNewUser($dbh, $filteredSlackId);
+		$user_id = getUserId($dbh, $filteredSlackId);
 		if ($user_id == false) die("Could not get user");
 		else botRespond("DB", "Added new user.");
 	}
@@ -67,51 +74,25 @@ else {
 /* Create */
 
 // Add a new user to the users table.
-function addNewUser($pdo, $user_user_id)
+function addNewUser($pdo, $userSlackId)
 {
 	$stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
-	$stmt->bindParam(':userId', $user_user_id);
+	$stmt->bindParam(':userId', $userSlackId);
 	$stmt->execute();
 }
 
 /* Read */
 
 // fetch the id of the user from database using user_id.
-function getUserId($pdo, $user_user_id)
+function getUserId($pdo, $userSlackId)
 {
 	$stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
-	$stmt->bindParam(':userId', $user_user_id);
+	$stmt->bindParam(':userId', $userSlackId);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
 	botRespond("getUserId", $result);
 	if ($result == false) return false;
 	else return array_values($result)[0];
-}
-
-/* userMeta table */
-
-
-// Add a new userMeta to the userMeta table.
-function addNewUserMeta($pdo, $user_id)
-{
-	$stmt = $pdo->prepare("INSERT INTO userMeta(userId, metaKey, value) VALUES (userId = :userId, metaKey = :metaKey, value = :value");
-	$stmt->bindParam(':userId', $user_id);
-	$stmt->bindParam(':metaKey', time());
-	$stmt->bindParam(':value', 0);
-	$stmt->execute();
-}
-
-// fetch the projectMeta of the specified project from database using projectId.
-function getUserMeta($pdo, $user_id)
-{
-	$sql = "SELECT * FROM userMeta WHERE userId = :userId";
-	$stmt = $pdo->prepare($sql);
-	$stmt->bindParam(':userId', $user_id);
-	$stmt->execute();
-	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	//if ($result == false) die("Could not find user meta.");
-	//else
-	return $result;
 }
 
 /* projects table */
