@@ -40,44 +40,26 @@ else {
 	botRespond("user_id", $user_id);
 
 
-	$user_meta = getUserMeta($dbh, $user_id);
-	if ($user_meta == false) { }
-	botRespond("user_meta", $user_meta);
+	$project_name;
 
-	// Check if there are no arguments.
-	if ($args[0] == "") {
-		//TODO: Set user to active on "other".
+	if ($args[0] == "") $project_name = "Other"; // Sets project name to other if no arguments are provided.
+	else $project_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
+	botRespond("project_name", $project_name);
 
-	} else {
+	// get project id.
+	$project_id = getProjectId($dbh, $project_name);
+	botRespond("project_id", $project_id);
 
-		//TODO: Set any active project to inactive.
-		//TODO: Set user to active on project.
-		$project_name = filter_var($args[0], FILTER_SANITIZE_STRING); // first argument specifes project name.
-		botRespond("project_name", $project_name);
-
-		// get project id.
-		$project_id = getProjectId($dbh, $project_name);
-		botRespond("project_id", $project_id);
-
-		// get project meta.
-		//$project_meta = getProjectMeta($dbh, $project_id);
-		//botRespond("project_meta", $project_meta);
-
-
-		//if("PROJECT IS ACTIVE")checkoutActiveProject();
-
+	$connection_id = getProjectConnection($dbh, $user_id, $project_id);
+	if ($connection_id == false) {
+		createNewProjectConnection($dbh, $user_id, $project_id);
 		$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-		if ($connection_id == false) {
-			createNewProjectConnection($dbh, $user_id, $project_id);
-			$connection_id = getProjectConnection($dbh, $user_id, $project_id);
-			if ($connection_id == false) die("Could not get connection id.");
-		}
-
- 		unsetActiveProject($dbh, $user_id);
-
-
-		setActiveProject($dbh, $user_id, $project_id);
+		if ($connection_id == false) die("Could not get connection id.");
 	}
+
+	unsetActiveProject($dbh, $user_id);
+
+	setActiveProject($dbh, $user_id, $project_id);
 }
 
 /* users table */
@@ -171,7 +153,7 @@ function getProjectConnection($pdo, $u_id, $p_id)
 	$stmt->bindParam(':projectId', $p_id);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_ASSOC);
-	if($result == false) return false;
+	if ($result == false) return false;
 	else return array_values($result)[0];
 }
 
@@ -202,17 +184,17 @@ function unsetActiveProject($pdo, $u_id)
 {
 	$true = 1;
 	$active = 0;
-	
-	
+
+
 	$stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections WHERE userId = :userId AND active = :true");
-	
+
 	$stmt->bindParam(':userId', $u_id);
 	$stmt->bindParam(':true', $true);
 	$stmt->execute();
 	$chekedInAt = array_values($stmt->fetch(PDO::FETCH_ASSOC))[0];
 
 	$stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
-	
+
 	$stmt->bindParam(':userId', $u_id);
 	$stmt->bindParam(':true', $true);
 	$stmt->execute();
@@ -228,7 +210,7 @@ function unsetActiveProject($pdo, $u_id)
 	$stmt->bindParam(':true', $true);
 	$stmt->bindParam(':active', $active);
 	$stmt->bindParam(':timeSpent', $timeSpent);
-	
+
 	$stmt->execute();
 }
 
