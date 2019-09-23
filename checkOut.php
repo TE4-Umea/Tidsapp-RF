@@ -23,13 +23,17 @@
 
     $timeSpent += (time() - $chekedInAt);
 
-    botRespond("timeSpent", $timeSpent);
-
     $stmt = $dbh->prepare("UPDATE projectConnections SET active = :active, timeSpent = :timeSpent WHERE userId = :userId AND active = :true");
     $stmt->bindParam(':userId', $u_id);
     $stmt->bindParam(':true', $true);
     $stmt->bindParam(':active', $active);
     $stmt->bindParam(':timeSpent', $timeSpent);
     $stmt->execute();
+
+    bot_respond('Sucessfully checked out.');
+
+    function bot_respond($message){
+        echo json_encode($message);
+    }
 
 ?>
