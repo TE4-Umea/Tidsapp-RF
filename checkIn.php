@@ -69,12 +69,22 @@ if (count($args) > 1) {
 
         createNewProjectConnection($dbh, $userId, $project_id);
         $connection_id = getProjectConnection($dbh, $userId, $project_id);
+
+        botRespond("Connection", "Created new connection");
     }
 
     //die("oof");
+    try{
     unsetActiveProject($dbh, $userId);
-
+    } catch (Exception $e) {
+        botRespond("connection", $e);
+    }
     setActiveProject($dbh, $userId, $project_id);
+
+    botRespond("timeSpent", gmdate('H:i:s', getTime($dbh,  $userId)));
+
+    botRespond("Checked in on project", $project_name);
+    
 }
 
 /* users table */
@@ -118,12 +128,12 @@ function getProjectId($pdo, $dbProjectName)
 function createNewProjectConnection($pdo, $dbUserId, $dbProjectId)
 {
 
-    $checkedInAt = time();
+    $now = time();
     $timeSpent = 0;
-    $stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId, checkedInAt, timeSpent) VALUES (:userId, :projectId, NOW(), :timeSpent)");
+    $stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId, checkedInAt, timeSpent) VALUES (:userId, :projectId, :now, :timeSpent)");
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':projectId', $dbProjectId);
-    $stmt->bindParam(':checkedInAt', $checkedInAt);
+    $stmt->bindParam(':now', $now);
     $stmt->bindParam(':timeSpent', $timeSpent);
 
     $stmt->execute();
@@ -156,8 +166,7 @@ function setActiveProject($pdo, $dbUserId, $dbProjectId)
 // Checks out on any active project
 function unsetActiveProject($pdo, $dbUserId)
 {
-
-    $checkedInAt = getConnectionCheckedInAt($pdo, $dbUserId);
+    botRespond("checkin", getConnectionCheckedInAt($pdo, $dbUserId));
     $true = 1;
     $active = 0;
 
@@ -166,9 +175,7 @@ function unsetActiveProject($pdo, $dbUserId)
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':true', $true);
     $stmt->bindParam(':active', $active);
-    //$stmt->bindParam(':timeSpent', $timeSpent);
     $stmt->bindParam(':now', $now);
-
     $stmt->execute();
 }
 
@@ -176,13 +183,24 @@ function getConnectionCheckedInAt($pdo, $dbUserId)
 {
     $true = 1;
 
-    $stmt = $pdo->prepare("SELECT 'checkedInAt' FROM projectConnections WHERE userId = :userId AND active = :true");
+    $stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections WHERE userId = :userId AND active = :true");
 
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':true', $true);
     $stmt->execute();
     $result = $stmt->fetch();
-    return $result;
+    return $result[0];
+}
+
+function getTime($pdo, $dbUserId){
+    //$checkedInAt = getConnectionCheckedInAt($pdo, $dbUserId);
+    $true = 1;
+    $stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
+    $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':true', $true);
+    $stmt->execute();
+    $result = $stmt->fetch();
+    return $result[0];
 }
 
 /*
