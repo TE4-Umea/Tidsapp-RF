@@ -27,7 +27,7 @@
 	
 	// Include database and authentication info.
 	include_once 'include/dbinfo.php';
-	include_once 'include/auth.php'
+	include_once 'include/auth.php';
 
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
