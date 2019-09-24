@@ -38,7 +38,7 @@ if (count($args) > 1) {
     //    get user id.
     $userId = getUserId($dbh, $slackId);
     if ($userId == false) {
-        botRespond("ERROR", "Could not find user id");
+        botRespond("DB", "Could not find user id.");
         addNewUser($dbh, $slackId);
         $userId = getUserId($dbh, $slackId);
         botRespond("DB", "Added new user.");
