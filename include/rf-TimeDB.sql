@@ -13,9 +13,9 @@
 
 
 -- Dumping database structure for testDB
-#DROP DATABASE IF EXISTS `testDB`;
-#CREATE DATABASE IF NOT EXISTS `testDB` /*!40100 DEFAULT CHARACTER SET latin1 */;
-#USE `testDB`;
+DROP DATABASE IF EXISTS `testDB`;
+CREATE DATABASE IF NOT EXISTS `testDB` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `testDB`;
 
 -- Dumping structure for table testDB.projectConnections
 DROP TABLE IF EXISTS `projectConnections`;
@@ -24,10 +24,10 @@ CREATE TABLE IF NOT EXISTS `projectConnections` (
   `userId` int(16) unsigned NOT NULL,
   `projectId` int(16) unsigned NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '0',
-  `checkedInAt` int(16) NOT NULL DEFAULT '0',
-  `timeSpent` int(16) NOT NULL DEFAULT '0',
+  `checkedInAt` datetime NOT NULL,
+  `timeSpent` time NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `projects` (
   `id` int(16) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 -- Data exporting was unselected.
 
