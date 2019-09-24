@@ -44,7 +44,7 @@
 	}
 	
 	if (in_array($filteredProjectName, $projectNames)) {
-		bot_respond('Project already exist');
+		bot_respond('Project already exists');
 		die();
 	}
 
