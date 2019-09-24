@@ -26,7 +26,9 @@
 	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
 	
 	// Include database info.
-	include_once 'include/dbinfo.php'
+	include_once 'include/dbinfo.php';
+
+	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 	// Check if project already exist.
 	$stmt = $dbh->prepare("SELECT * FROM projects");
@@ -45,23 +47,38 @@
 		die();
 	}
 
+
 	// Create a new project with the specified projectname input.
-	$stmt = $dbh->prepare("INSERT INTO `projects`(`id`, `name`) VALUES name = :name");
+	$stmt = $dbh->prepare("INSERT INTO projects(name) VALUES (:name)");
+	$stmt->bindParam(':name', $filteredProjectName);
+	$stmt->execute();
+	
+
+	/*
+	function getProjectId($pdo, $dbProjectName)
+	{
+    	$stmt = $pdo->prepare("SELECT id FROM projects WHERE name = :name");
+    	$stmt->bindParam(':name', $filteredProjectName);
+    	$stmt->execute();
+    	$result = $stmt->fetch();
+    	return $result[0];
+	}*/
+	
+	// Fetch id from specified projectname input.
+	/*
+	$stmt = $dbh->prepare("SELECT id FROM projects WHERE name = :name");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
-	// Fetch id from specified projectname input.
-	$stmt = $dbh->prepare("SELECT `id` FROM `projects` WHERE name = :name");
-	$stmt->bindParam(':name', $filteredProjectName)
-	$stmt->execute();
-
 	$id = $stmt->fetch(PDO::FETCH_ASSOC)[0];
+	*/
 
+	/*
 	// Create a projectMeta with the same projectId as the id of the specified projectname input.
-	$stmt = $dbh->prepare("INSERT * INTO `projectMeta` VALUES projectId = :id");
-	$stmt->bindParam(':id', $id);
+	$stmt = $dbh->prepare("INSERT * INTO projectMeta VALUES projectId = :id");
+	$stmt->bindParam(':id', $result[0]);
 	$stmt->execute();
-    
+	*/
 		
 	// Send information back to slack.
 	function bot_respond($output){
