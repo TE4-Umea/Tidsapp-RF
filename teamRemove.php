@@ -14,25 +14,28 @@
 	$filteredTeamName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
 	
 	// Include database info.
-	include_once 'include/dbinfo.php'
+	include_once 'include/dbinfo.php';
 
+	/*
 	// Fetch id from specified teamname input.
-	$stmt = $dbh->prepare("SELECT `id` FROM `teams` WHERE name = :name");
+	$stmt = $dbh->prepare("SELECT id FROM teams WHERE name = :name");
 	$stmt->bindParam(':name', $filteredTeamName);
     $stmt->execute();
     
 	$id = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+	*/
+	
     // Remove team with specified teamname input.
-	$stmt = $dbh->prepare("DELETE * FROM `teams` WHERE name = :name");
+	$stmt = $dbh->prepare("DELETE FROM teams WHERE name = :name");
 	$stmt->bindParam(':name', $filteredTeamName);
 	$stmt->execute();
 
+	/*
     // Remove teamMeta with same teamId as the id of the specified teamname input.
-	$stmt = $dbh->prepare("DELETE * FROM `teamMeta` WHERE teamId = :id");
+	$stmt = $dbh->prepare("DELETE * FROM teamMeta WHERE teamId = :id");
 	$stmt->bindParam(':id', $id);
 	$stmt->execute();
-    
+    */
 	
 	// Send information back to slack.
 	function bot_respond($output){
