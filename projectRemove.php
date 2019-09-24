@@ -15,19 +15,19 @@
 	
 	// Include database info.
 	include_once 'include/dbinfo.php';
-/*
+	/*
 	// Fetch id from specified projectname input.
 	$stmt = $dbh->prepare("SELECT id FROM projects WHERE name = :name");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
 	$id = $stmt->fetch(PDO::FETCH_ASSOC);
-*/	
+	*/	
 	// Remove project with specified teamname input.
 	$stmt = $dbh->prepare("DELETE FROM projects WHERE name = :name");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
-/*
+	/*
 	// Remove projectMeta with same projectId as the id of the specified projectname input.
 	$stmt = $dbh->prepare("DELETE * FROM projectMeta WHERE projectId = :id");
 	$stmt->bindParam(':id', $id);
