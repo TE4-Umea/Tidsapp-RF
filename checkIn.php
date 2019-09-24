@@ -1,5 +1,5 @@
 <?php
-echo ("--------------------------------\n");
+botRespond("RESPONSE", "");
 
 function dumper($request)
 {
@@ -34,32 +34,37 @@ if (count($args) > 1) {
     include_once 'include/dbinfo.php';
     $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    //print_r($dbh);
-
-    //    get user id.
+    //  get user id.
     $userId = getUserId($dbh, $slackId);
     if ($userId == false) {
         botRespond("DB", "Could not find user id.");
+
         addNewUser($dbh, $slackId);
         $userId = getUserId($dbh, $slackId);
+
         botRespond("DB", "Added new user.");
+
     }
-    botRespond("User id", $userId);
+
+    botRespond("[DB] - User ID", $userId);
 
     $project_name = "Other"; // Default project name, this will be used if no arguments are provided.
 
     if ($args[0] !== "") {
         $project_name = filter_var($args[0], FILTER_SANITIZE_STRING);
     } // first argument specifes project name.
+
     botRespond("Project name", $project_name);
 
     //get project id.
     $project_id = getProjectId($dbh, $project_name);
-    botRespond("Project ID", $project_id);
+
+    botRespond("[DB] - Project ID", $project_id);
 
     $connection_id = getProjectConnection($dbh, $userId, $project_id);
 
     if ($connection_id == false) {
+
         botRespond("Connection", "Unable to find project connection");
 
         createNewProjectConnection($dbh, $userId, $project_id);
@@ -75,7 +80,8 @@ if (count($args) > 1) {
 /* users table */
 
 //Add a new user to the users table.
-function addNewUser($pdo, $userSlackId){
+function addNewUser($pdo, $userSlackId)
+{
     $stmt = $pdo->prepare("INSERT INTO users(userId) VALUES (:userId)");
 
     $stmt->bindParam(':userId', $userSlackId);
@@ -84,7 +90,8 @@ function addNewUser($pdo, $userSlackId){
 }
 
 // fetch the id of the user from database using user_id.
-function getUserId($pdo, $userSlackId){
+function getUserId($pdo, $userSlackId)
+{
     $stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
     $stmt->bindParam(':userId', $userSlackId);
     $stmt->execute();
@@ -96,7 +103,8 @@ function getUserId($pdo, $userSlackId){
 /* projects table */
 
 // fetch the id of the specified project from database using projectName.
-function getProjectId($pdo, $dbProjectName){
+function getProjectId($pdo, $dbProjectName)
+{
     $stmt = $pdo->prepare("SELECT id FROM projects WHERE name = :name");
     $stmt->bindParam(':name', $dbProjectName);
     $stmt->execute();
@@ -107,7 +115,8 @@ function getProjectId($pdo, $dbProjectName){
 /* connections */
 
 // Adds a new project connection to the projectConnections table.
-function createNewProjectConnection($pdo, $dbUserId, $dbProjectId){
+function createNewProjectConnection($pdo, $dbUserId, $dbProjectId)
+{
 
     $checkedInAt = time();
     $timeSpent = 0;
@@ -120,7 +129,8 @@ function createNewProjectConnection($pdo, $dbUserId, $dbProjectId){
     $stmt->execute();
 }
 
-function getProjectConnection($pdo, $dbUserId, $dbProjectId){
+function getProjectConnection($pdo, $dbUserId, $dbProjectId)
+{
     $stmt = $pdo->prepare("SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId");
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':projectId', $dbProjectId);
@@ -130,7 +140,8 @@ function getProjectConnection($pdo, $dbUserId, $dbProjectId){
 }
 
 // Checks in on the specified project.
-function setActiveProject($pdo, $dbUserId, $dbProjectId){
+function setActiveProject($pdo, $dbUserId, $dbProjectId)
+{
     $active = 1;
     $checkedInAt = time();
     $stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
@@ -143,8 +154,8 @@ function setActiveProject($pdo, $dbUserId, $dbProjectId){
 }
 
 // Checks out on any active project
-function unsetActiveProject($pdo, $dbUserId){
-
+function unsetActiveProject($pdo, $dbUserId)
+{
 
     $checkedInAt = getConnectionCheckedInAt($pdo, $dbUserId);
     $true = 1;
@@ -161,7 +172,8 @@ function unsetActiveProject($pdo, $dbUserId){
     $stmt->execute();
 }
 
-function getConnectionCheckedInAt($pdo, $dbUserId){
+function getConnectionCheckedInAt($pdo, $dbUserId)
+{
     $true = 1;
 
     $stmt = $pdo->prepare("SELECT 'checkedInAt' FROM projectConnections WHERE userId = :userId AND active = :true");
@@ -180,6 +192,6 @@ Helper Functions
 // Send information back to slack
 function botRespond($tag, $output)
 {
-    echo ($tag) . ": ";
-    echo ($output) . " \n";
+        echo ($tag) . ": ";
+        echo ($output) . " \n";
 }
