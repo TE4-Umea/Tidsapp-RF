@@ -23,10 +23,13 @@
                   <div id="check">
                     <h4>Check In</h4>
                       <input class="w-100 mb-2" id="projectNameInput" type="text" placeholder="Choose a project..." name="text">
-                      <button class="btn" onclick="checkIn(document.getElementById('projectNameInput').value)">Check in</button>
+                      <button class="btn" onclick="checkIn()">Check in</button>
+                      <button class="btn" onclick="checkOut()">Check out</button>
+                     
                   </div>
                   <div id="projects">
                     <h4>Projects</h4>
+                    <button class="btn" onclick="addProject()">+</button>
                   </div>
                   <div id="teams">
                     <h4>Teams</h4>
