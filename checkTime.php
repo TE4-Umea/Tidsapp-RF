@@ -1,15 +1,5 @@
 <?php
 
-// Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
-$tokens = array(
-	"P2zoHA16O3ZuQQpQYpE7EC7M"
-);
-// check auth
-if (!in_array($_REQUEST['token'], $tokens)) {
-	botRespond("ERROR", "*Unauthorized token!*");
-	die();
-}
-
 //Check for if the command has something written
 if(!isset($_POST['text'])){
     bot_respond('Please write a project name.');

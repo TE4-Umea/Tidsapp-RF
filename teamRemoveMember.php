@@ -1,18 +1,8 @@
-<?php
-    // Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
-    $tokens = array(
-        "P2zoHA16O3ZuQQpQYpE7EC7M"
-    );
-    
-	// Check auth.
-	if (!in_array($_REQUEST['token'], $tokens)) {
-		bot_respond("*Unauthorized token!*");
-		die();
-	}
-    
+<?php    
 
 	// Include database info.
-	include_once 'include/dbinfo.php';
+    include_once 'include/dbinfo.php';
+    include_once 'include/auth.php';
 
     // Check if your command input is correct and matches an existing teamname and username.
     if(!isset($_POST['text'])){
