@@ -27,6 +27,7 @@ $filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
 // Include database and authentication info.
 include_once 'include/dbinfo.php';
 include_once 'include/auth.php';
+
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 // fetch the id of the user from database using user_id.
