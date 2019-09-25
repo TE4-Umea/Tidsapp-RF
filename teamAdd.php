@@ -14,6 +14,7 @@
     $stmt = $dbh->prepare("SELECT * FROM teams");
     $stmt->execute();
     $teams = $stmt->fetch(PDO::FETCH_ASSOC);
+
     $teamNames = array();
     
     foreach($teams as $team){
@@ -30,6 +31,7 @@
     $stmt->execute();
     bot_respond('Team "' . $filteredTeamName . '" sucessfully created.');
     die();
+
     function bot_respond($output){
         echo json_encode($output);
     }
