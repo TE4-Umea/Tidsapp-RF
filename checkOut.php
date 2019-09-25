@@ -1,9 +1,24 @@
 <?php
 
+    $tokens = array(
+        "P2zoHA16O3ZuQQpQYpE7EC7M"
+    );
+    //Check if token matches
+    if(!in_array($_REQUEST['token'], $tokens)){
+        bot_respond("Unauthorized Token!");
+        die();
+    }
+
     include_once 'include/dbinfo.php';
 
-    $u_id = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
-   
+    $userSlackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
+
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE userId = :userId");
+    $stmt->bindParam(':userId', $userSlackId);
+    $stmt->execute();
+
+    $u_id = $stmt->fetch();
+    
     $true = 1;
     $active = 0;
 
