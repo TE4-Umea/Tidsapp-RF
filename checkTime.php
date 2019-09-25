@@ -1,34 +1,48 @@
 <?php
 
-// Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
-$tokens = array(
-	"P2zoHA16O3ZuQQpQYpE7EC7M"
-);
-// check auth
-if (!in_array($_REQUEST['token'], $tokens)) {
-	botRespond("ERROR", "*Unauthorized token!*");
-	die();
-}
-
-//Check for if the command has something written
-if(!isset($_POST['text'])){
-    bot_respond('Please write a project name.');
-    die();
-}
-	
-$nameCheck = explode(" ", $_POST['text']);
-	
-if($nameCheck.sizeof() > 1){
-    bot_respond('Project names can only be one word.');
-}
-	
-$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
-
 // Include database and authentication info.
 include_once 'include/dbinfo.php';
 include_once 'include/auth.php';
 
 $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+//Check for if the command has something written
+if(!isset($_REQUEST['text'])){
+    bot_respond('Please write a project name.');
+    die();
+}
+	
+$projectName = explode(" ", filter_var($_REQUEST['text'], FILTER_SANITIZE_STRING))[0];
+
+$slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
+	
+if($nameCheck.sizeof() > 1){
+    bot_respond('Project names can only be one word.');
+    die();
+}
+
+$dbUserId = getUserId($dbh, $slackId);
+
+botRespond("userId", $dbUserId);
+
+$dbProjectId = getProjectId($dbh, $projectName);
+
+botRespond("projectId", $dbProjectId);
+
+$dbConnectionId = getConnectionId($dbh, $dbUserId, $dbProjectId);
+
+botRespond("connectionId", $dbConnectionId);
+
+if(getConnectionActive($dbh, $dbConnectionId)){
+    botRespond("ye", "ye");
+    updateTime($dbh, $dbConnectionId);
+}
+
+botRespond("Time", gmdate('H:i:s', getTime($dbh, $dbConnectionId)));
+
+
+botRespond("yeet", "yeet");
+die();
 
 // fetch the id of the user from database using user_id.
 function getUserId($pdo, $userSlackId){
@@ -48,31 +62,45 @@ function getProjectId($pdo, $dbProjectName){
     return $result[0];
 }
 
-function getConnectionCheckedInAt($pdo, $dbUserId){
-    $true = 1;
-    $stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections WHERE userId = :userId AND active = :true");
+function getConnectionId($pdo, $dbUserId, $dbProjectId){
+    $stmt = $pdo->prepare("SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId");
     $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':true', $true);
+    $stmt->bindParam(':projectId', $dbProjectId);
     $stmt->execute();
     $result = $stmt->fetch();
     return $result[0];
 }
 
-function getTime($pdo, $dbUserId){
-    $true = true;
-    $stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
-    $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':true', $true);
+function getConnectionActive($pdo, $dbConnectionId){
+    $stmt = $pdo->prepare("SELECT active FROM projectConnections WHERE id = :connectionId");
+    $stmt->bindParam(':connectionId', $dbConnectionId);
+    $stmt->execute();
+    $result = $stmt->fetch();
+    return $result[0];
+}
+
+function updateTime($pdo, $dbConnectionId){
+    $active = 1;
+    $now = time();
+    $stmt = $pdo->prepare("UPDATE projectConnections SET timeSpent = (timeSpent + (:now - checkedInAt)), checkedInAt = :now WHERE id = :connectionId AND active = :active");
+    $stmt->bindParam(':connectionId', $dbConnectionId);
+    $stmt->bindParam(':active', $active);
+    $stmt->bindParam(':now', $now);
+    $stmt->execute();
+}
+
+function getTime($pdo, $dbConnectionId){
+    $stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE id = :connectionId");
+    $stmt->bindParam(':connectionId', $dbConnectionId);
     $stmt->execute();
     $result = $stmt->fetch();
     return $result[0];
 }
 
 // Send information back to slack
-function botRespond($tag, $output)
-{
-	echo ($tag) . "<br>";
-	echo json_encode($output) . "<br><br>";
+function botRespond($tag, $output){
+    echo ($tag) . ": ";
+    echo ($output) . " \n";
 }
 
 ?>
