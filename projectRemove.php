@@ -15,7 +15,7 @@
 	
 	// Include database and authentication info.
 	include_once 'include/dbinfo.php';
-	include_once 'include/auth.php'
+	include_once 'include/auth.php';
 
 	/*
 	// Fetch id from specified projectname input.

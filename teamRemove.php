@@ -13,8 +13,9 @@
 
 	$filteredTeamName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
 	
-	// Include database info.
+	// Include database and authentication info.
 	include_once 'include/dbinfo.php';
+	include_once 'include/auth.php';
 
 	/*
 	// Fetch id from specified teamname input.

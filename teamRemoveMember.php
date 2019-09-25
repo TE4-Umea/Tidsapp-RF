@@ -10,6 +10,10 @@
 		die();
 	}
     
+
+	// Include database info.
+	include_once 'include/dbinfo.php';
+
     // Check if your command input is correct and matches an existing teamname and username.
     if(!isset($_POST['text'])){
         bot_respond('Please write a team and user name.');
@@ -34,8 +38,9 @@
     
     $metaKey = 'Member';
     
-    // Include databse info.
-    include_once 'include/dbinfo.php';
+	// Include database and authentication info.
+	include_once 'include/dbinfo.php';
+	include_once 'include/auth.php'
     
     // fetch and check if the teamname input exist, throw error message if not.
     $stmt = $dbh->prepare("SELECT id FROM teams WHERE name = :name");
