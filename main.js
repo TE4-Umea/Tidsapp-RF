@@ -1,13 +1,15 @@
 checkIn = (projectName) => {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "https://external.umea-ntig.se/~pilwil17/rfTimeApp/checkIn.php", true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify({
-    //    token: 
-        text: projectName
-    }));
+    $.post('checkIn.php', {
+        token: "P2zoHA16O3ZuQQpQYpE7EC7M",
+        text: projectName,
+        user_id: "FRONT"
+    })
 }
 
 logOut = () => {
 
 } 
+
+getProjects = (userId) => {
+
+}
