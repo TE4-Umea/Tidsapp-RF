@@ -1,0 +1,124 @@
+:root {
+  --c-primary: #e1675f;
+  --c-dark: #7d6b6a;
+  --c-light: #e9e9e9;
+}
+
+* {
+  transition: all 0.3s;
+  scroll-behavior: smooth;
+}
+
+#main {
+  padding: 0;
+}
+
+.navbar {
+  background-color: var(--c-primary);
+}
+
+#content {
+  padding: 0 10px;
+}
+
+#content h4 {
+  padding: 10px 0;
+  font-weight: 300;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--c-light);
+}
+
+input {
+  padding: 5px 10px;
+  border: 1px solid var(--c-light);
+  border-radius: 5px;
+  outline-color: var(--c-primary);
+}
+
+.btn {
+  background-color: var(--c-primary);
+  color: var(--c-light);
+}
+
+.btn:hover {
+  color: #fff;
+}
+
+@media (min-width: 768px) {
+
+  #main {
+    height: 100vh;
+    width: 100vw;
+    padding: 40px;
+    background-image: url(memphis-mini.png);
+  }
+
+  #box {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  #content {
+    height: calc(100vh - 156px);
+    margin: 10px;
+    overflow-y: auto;
+  }
+
+  #content > div > div {
+    min-height: calc(100vh - 156px);
+  }
+
+  #side {
+    background-color: var(--c-dark);
+  }
+
+  #side ul, .side-avatar {
+    position: relative;
+    top: -50px; 
+  }
+
+  .side-avatar {
+    width: 150px;
+    margin: 20px;
+    background-color: #fff;
+  }
+
+  #side ul {
+    align-items: start;
+  }
+
+  .nav-link {
+    width: auto;
+    margin: 0 0 5px 20px;
+    padding: 5px 0;
+    color: rgba(255,255,255,0.6);
+    border-bottom: 2px solid transparent;
+  }
+
+  .nav-link:hover {
+    color: #fff;
+  }
+
+  .nav-link.active {
+    color: #fff;
+    border-bottom-color: #fff;
+  }
+
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--c-light);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--c-primary);
+  border-radius: 3px;
+}
