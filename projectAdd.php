@@ -2,24 +2,27 @@
 
 	//Check for if the command has something written
 	if(!isset($_POST['text'])){
-        bot_respond('Please write a project name.');
+        botRespond('Please write a project name.');
         die();
     }
 	
 	$nameCheck = explode(" ", $_POST['text']);
+	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
+	$stringProjectName = strval($filteredProjectName);
 	
 	if($nameCheck.sizeof() > 1){
-        bot_respond('Please make the project name only one word.');
-    }
-	
-	$filteredProjectName = filter_input(INPUT_POST, "text", FILTER_SANITIZE_STRING);
+        botRespond('Please make the project name only one word.');
+	} else if(strlen($stringProjectName) > 15) {
+		die('Project names can not exceed 16 characters.');
+	}
+
 	
 	// Include database and authentication info.
 	include_once 'include/dbinfo.php';
 	include_once 'include/auth.php';
 
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+	
 	// Check if project already exist.
 	$stmt = $dbh->prepare("SELECT * FROM projects");
 	$stmt->execute();
@@ -33,46 +36,20 @@
 	}
 	
 	if (in_array($filteredProjectName, $projectNames)) {
-		bot_respond('Project already exists');
+		botRespond('Project already exists');
 		die();
 	}
-
 
 	// Create a new project with the specified projectname input.
 	$stmt = $dbh->prepare("INSERT INTO projects(name) VALUES (:name)");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
-	
 
-	/*
-	function getProjectId($pdo, $dbProjectName)
-	{
-    	$stmt = $pdo->prepare("SELECT id FROM projects WHERE name = :name");
-    	$stmt->bindParam(':name', $filteredProjectName);
-    	$stmt->execute();
-    	$result = $stmt->fetch();
-    	return $result[0];
-	}*/
-	
-	// Fetch id from specified projectname input.
-	/*
-	$stmt = $dbh->prepare("SELECT id FROM projects WHERE name = :name");
-	$stmt->bindParam(':name', $filteredProjectName);
-	$stmt->execute();
-
-	$id = $stmt->fetch(PDO::FETCH_ASSOC)[0];
-	*/
-
-	/*
-	// Create a projectMeta with the same projectId as the id of the specified projectname input.
-	$stmt = $dbh->prepare("INSERT * INTO projectMeta VALUES projectId = :id");
-	$stmt->bindParam(':id', $result[0]);
-	$stmt->execute();
-	*/
+	botRespond('Added project: ' . $filteredProjectName);
 		
-	// Send information back to slack.
-	function bot_respond($output){
-		echo json_encode($output);
+	// Send information back to slack
+	function botRespond($output){
+		echo ($output);
 	}
 	
 ?>
