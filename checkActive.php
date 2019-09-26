@@ -20,6 +20,7 @@ $slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
 
     // Load database info from dbinfo.
     include_once 'include/dbinfo.php';
+    include_once 'include/auth.php';
     $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     //  get user id.
@@ -33,8 +34,6 @@ $slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
         botRespond("DB", "Added new user.");
 
     }
-
-  
 
     //get project id.
     $project_id = getProjectId($dbh, $userId);
@@ -67,8 +66,10 @@ function getUserId($pdo, $userSlackId){
 
 // fetch the id of the specified project from database using projectName.
 function getProjectId($pdo, $dbUserId){
-    $stmt = $pdo->prepare("SELECT projectId FROM projectConnections WHERE userId = :userId");
+    $true = 1;
+    $stmt = $pdo->prepare("SELECT projectId FROM projectConnections WHERE userId = :userId AND active = :active");
     $stmt->bindParam(':userId', $dbUserId);
+    $stmt->bindParam(':active', $true);
     $stmt->execute();
     $result = $stmt->fetch();
     return $result[0];
@@ -84,72 +85,10 @@ function getProjectName($pdo, $dbProjectId){
 
 /* connections */
 
-// Adds a new project connection to the projectConnections table.
-function createNewProjectConnection($pdo, $dbUserId, $dbProjectId){
-
-    $now = time();
-    $timeSpent = 0;
-    $stmt = $pdo->prepare("INSERT INTO projectConnections(userId, projectId, checkedInAt, timeSpent) VALUES (:userId, :projectId, :now, :timeSpent)");
-    $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':projectId', $dbProjectId);
-    $stmt->bindParam(':now', $now);
-    $stmt->bindParam(':timeSpent', $timeSpent);
-
-    $stmt->execute();
-}
-
 function getProjectConnection($pdo, $dbUserId, $dbProjectId){
     $stmt = $pdo->prepare("SELECT id FROM projectConnections WHERE userId = :userId AND projectId = :projectId");
     $stmt->bindParam(':userId', $dbUserId);
     $stmt->bindParam(':projectId', $dbProjectId);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    return $result[0];
-}
-
-// Checks in on the specified project.
-function setActiveProject($pdo, $dbUserId, $dbProjectId){
-    $active = 1;
-    $checkedInAt = time();
-    $stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, checkedInAt = :checkedInAt WHERE userId = :userId AND projectId = :projectId");
-    $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':projectId', $dbProjectId);
-    $stmt->bindParam(':active', $active);
-    $stmt->bindParam(':checkedInAt', $checkedInAt);
-    $stmt->execute();
-
-}
-
-// Checks out on any active project
-function unsetActiveProject($pdo, $dbUserId){
-    $true = 1;
-    $active = 0;
-    $now = time();
-    $stmt = $pdo->prepare("UPDATE projectConnections SET active = :active, timeSpent = (timeSpent + (:now - checkedInAt)) WHERE userId = :userId AND active = :true");
-    $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':true', $true);
-    $stmt->bindParam(':active', $active);
-    $stmt->bindParam(':now', $now);
-    $stmt->execute();
-}
-
-function getConnectionCheckedInAt($pdo, $dbUserId){
-    $true = 1;
-
-    $stmt = $pdo->prepare("SELECT checkedInAt FROM projectConnections WHERE userId = :userId AND active = :true");
-
-    $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':true', $true);
-    $stmt->execute();
-    $result = $stmt->fetch();
-    return $result[0];
-}
-
-function getTime($pdo, $dbUserId){
-    $true = true;
-    $stmt = $pdo->prepare("SELECT timeSpent FROM projectConnections WHERE userId = :userId AND active = :true");
-    $stmt->bindParam(':userId', $dbUserId);
-    $stmt->bindParam(':true', $true);
     $stmt->execute();
     $result = $stmt->fetch();
     return $result[0];
