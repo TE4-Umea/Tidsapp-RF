@@ -5,23 +5,11 @@ function dumper($request)
     echo "<pre>" . print_r($request, 1) . "</pre>";
 }
 
-// Authorized team tokens that you would need to get when creating a slash command. Same script can serve multiple teams, just keep adding tokens to the array below.
-$tokens = array(
-    "P2zoHA16O3ZuQQpQYpE7EC7M",
-);
-
-// check auth
-if (!in_array($_REQUEST['token'], $tokens)) {
-    botRespond("ERROR", "*Unauthorized token!*");
-    die();
-}
+	// Include database and authentication info.
+	include_once 'include/dbinfo.php';
+	include_once 'include/auth.php';
 
 $slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
-
-    // Load database info from dbinfo.
-    include_once 'include/dbinfo.php';
-    include_once 'include/auth.php';
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     //  get user id.
     $userId = getUserId($dbh, $slackId);

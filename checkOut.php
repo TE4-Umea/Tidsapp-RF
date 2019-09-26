@@ -4,8 +4,6 @@
 include_once 'include/dbinfo.php';
 include_once 'include/auth.php';
 
-$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 $slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
 $dbUserId = getUserId($dbh, $slackId);
 //botRespond($dbUserId);

@@ -4,8 +4,6 @@
 include_once 'include/dbinfo.php';
 include_once 'include/auth.php';
 
-$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 //Check for if the command has something written
 if (!isset($_REQUEST['text'])) {
     bot_respond('Please write a project name.');
