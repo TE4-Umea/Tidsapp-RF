@@ -22,7 +22,9 @@
 	include_once 'include/auth.php';
 
 	$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 	
+	/*
 	// Check if project already exist.
 	$stmt = $dbh->prepare("SELECT * FROM projects");
 	$stmt->execute();
@@ -39,13 +41,29 @@
 		botRespond('Project already exists');
 		die();
 	}
+	*/
 
+	if(getProjectId($dbh, $filteredProjectName) == false){
+	
 	// Create a new project with the specified projectname input.
 	$stmt = $dbh->prepare("INSERT INTO projects(name) VALUES (:name)");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
 
 	botRespond('Added project: ' . $filteredProjectName);
+	} else {
+		die("Project already exists");
+	}
+
+	// fetch the id of the specified project from database using projectName.
+function getProjectId($pdo, $dbProjectName){
+    $stmt = $pdo->prepare("SELECT id FROM projects WHERE name = :name");
+    $stmt->bindParam(':name', $dbProjectName);
+    $stmt->execute();
+    $result = $stmt->fetch();
+    return $result[0];
+}
+
 		
 	// Send information back to slack
 	function botRespond($output){
