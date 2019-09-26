@@ -26,12 +26,12 @@ $slackId = filter_var($_REQUEST['user_id'], FILTER_SANITIZE_STRING);
     //  get user id.
     $userId = getUserId($dbh, $slackId);
     if ($userId == false) {
-        botRespond("DB", "Could not find user id.");
+       // botRespond("DB", "Could not find user id.");
 
         addNewUser($dbh, $slackId);
         $userId = getUserId($dbh, $slackId);
 
-        botRespond("DB", "Added new user.");
+     //   botRespond("DB", "Added new user.");
 
     }
 

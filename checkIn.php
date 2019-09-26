@@ -32,12 +32,12 @@ if (count($args) > 1) {
     //  get user id.
     $userId = getUserId($dbh, $slackId);
     if ($userId == false) {
-        botRespond("DB", "Could not find user id.");
+        //botRespond("DB", "Could not find user id.");
 
         addNewUser($dbh, $slackId);
         $userId = getUserId($dbh, $slackId);
 
-        botRespond("DB", "Added new user.");
+       // botRespond("DB", "Added new user.");
 
     }
 
@@ -56,14 +56,14 @@ if (count($args) > 1) {
         createNewProjectConnection($dbh, $userId, $project_id);
         $connection_id = getProjectConnection($dbh, $userId, $project_id);
 
-        botRespond("Connection", "Established connection to project.");
+      //  botRespond("Connection", "Established connection to project.");
     }
 
     //die("oof");
     try {
         unsetActiveProject($dbh, $userId);
     } catch (Exception $e) {
-        botRespond("connection", $e);
+  //      botRespond("connection", $e);
     }
     setActiveProject($dbh, $userId, $project_id);
 

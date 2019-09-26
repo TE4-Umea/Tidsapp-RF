@@ -11,9 +11,11 @@
 	$stmt = $dbh->prepare("DELETE FROM projects WHERE name = :name");
 	$stmt->bindParam(':name', $filteredProjectName);
 	$stmt->execute();
+
+	botRespond("Removed project", $filteredProjectName);
 	
 	// Send information back to slack.
-	function bot_respond($output){
+	function botRespond($output){
 		echo json_encode($output);
 	}
 	
