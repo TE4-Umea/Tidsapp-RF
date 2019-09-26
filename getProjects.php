@@ -8,11 +8,11 @@
 
     $projects = $stmt->fetch();
 
-    bot_respond($projects);
+    botRespond($projects);
 
 
-    function bot_respond($message){
-        echo json_encode($message);
+    function botRespond($message){
+        echo $message;
     }
 
 ?>
