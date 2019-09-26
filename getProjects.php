@@ -15,6 +15,7 @@ while ($project = $stmt->fetch()) {
 };
 botRespond("```");
 
+
 function botRespond($message)
 {
     echo ($message . "\n");
