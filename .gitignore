@@ -1,1 +1,2 @@
 include/dbinfo.php
+include/auth.php
