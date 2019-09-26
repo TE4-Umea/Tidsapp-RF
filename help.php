@@ -20,7 +20,7 @@ Check in / Check out \n
 /rf-checkactive - shows the current active project.");
 
 // Send information back to slack
-function botRespond( $output){
+function botRespond($output){
     echo ($output);
 }
 
