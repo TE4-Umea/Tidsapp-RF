@@ -1,18 +1,21 @@
 <?php
 
-    include_once 'include/auth.php';
-    include_once 'include/dbinfo.php';
+include_once 'include/auth.php';
+include_once 'include/dbinfo.php';
 
-    $stmt = $dbh->prepare('SELECT names FROM projects');
-    $stmt->execute();
+$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $projects = $stmt->fetch();
+$stmt = $dbh->prepare('SELECT name FROM projects');
+$stmt->execute();
 
-    bot_respond($projects);
+botRespond("Project list:");
+botRespond("```");
+while ($project = $stmt->fetch()) {
+    botRespond($project['name']);
+};
+botRespond("```");
 
-
-    function bot_respond($message){
-        echo json_encode($message);
-    }
-
-?>
+function botRespond($message)
+{
+    echo ($message . "\n");
+}
