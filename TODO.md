@@ -1,7 +1,7 @@
 # TODO
 
 * __/rf-help__
-* Blocka duplicate namn.__
+* __Blocka duplicate namn.__
 * __response för att lägga till ett project.__
 * __hantera för långa projectnames.__
 * __response för checkout.__
